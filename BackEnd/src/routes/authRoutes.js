@@ -2,11 +2,12 @@ import express from 'express';
 import { body } from 'express-validator';
 import * as authController from '../controllers/authController.js';
 import { authenticateToken } from '../middleware/authMiddleware.js';
-import { validateRequest } from '../middleware/validationMiddleware.js';
+import { validate } from '../middleware/validateMiddleware.js';
 
 const router = express.Router();
 
-router.post('/register',
+router.post(
+    '/register',
     [
         body('userEmail').isEmail().withMessage('Please provide a valid email address'),
         body('userPassword').isLength({ min: 12 }).withMessage('Password must be at least 12 characters long'),
@@ -14,20 +15,20 @@ router.post('/register',
         body('userPhone').notEmpty().withMessage('User phone number is required'),
         body('userMailingAddress').optional(),
         body('userBillingAddress').optional(),
-        body('isBillingAddressSame').optional().isboolean(),
+        body('isBillingAddressSame').optional().isBoolean(),
         body('preferredPayment').optional().isIn(['CASH', 'CARD', 'CHECK']),
-        validateRequest,
+        validate,
     ],
     authController.registerUser
 );
 
-//login route
+// login route
 router.post(
     '/login',
     [
         body('userEmail').isEmail().withMessage('Please provide a valid email address'),
         body('userPassword').notEmpty().withMessage('Password is required'),
-        validateRequest,
+        validate,
     ],
     authController.userLogin
 );
@@ -39,7 +40,7 @@ router.post(
         body('userName').notEmpty().withMessage('User name is required'),
         body('userPhone').notEmpty().withMessage('User phone number is required'),
         body('userEmail').isEmail().withMessage('Please provide a valid email address'),
-        validateRequest,
+        validate,
     ],
     authController.createGuestUser
 );
@@ -51,11 +52,11 @@ router.put(
         body('userPassword').isLength({ min: 12 }).withMessage('Password must be at least 12 characters long'),
         body('userMailingAddress').optional(),
         body('userBillingAddress').optional(),
-        body('isBillingAddressSame').optional().isboolean(),
+        body('isBillingAddressSame').optional().isBoolean(),
         body('preferredPayment').optional().isIn(['CASH', 'CARD', 'CHECK']),
-        validateRequest,
+        validate,
     ],
-    authController.upgradeGuestUser
+    authController.upgradeGuest
 );
 
 // Get current user (requires authentication)

@@ -2,14 +2,15 @@ import * as authService from '../services/authService.js';
 
 export const registerUser = async (req, res, next) => {
     try {
+        console.log("1. Controller hit");
         const result = await authService.registerUser(req.body);
         res.status(201).json({
             success: true,
             message: 'User registered successfully',
             data: result,
         });
-
     } catch (error) {
+        console.log("1X. Controller catch:", error.message);
         next(error);
     }
 };
