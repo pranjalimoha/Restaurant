@@ -14,8 +14,13 @@
   "dependencies": {
     "@prisma/adapter-mariadb": "^7.7.0",
     "@prisma/client": "^7.7.0",
+    "bcryptjs": "^3.0.3",
     "cors": "^2.8.6",
+<<<<<<< HEAD
     "dotenv": "^17.4.2",
+=======
+    "dotenv": "^17.4.1",
+>>>>>>> cbae248bd4b8b3712ce2596d55b992ccdc923a83
     "express": "^5.2.1",
     "express-validator": "^7.3.2",
     "jsonwebtoken": "^9.0.3"

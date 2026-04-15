@@ -3,128 +3,163 @@ import prisma from '../lib/prisma.js';
 import { generateToken } from '../utils/jwt.js';
 
 export const registerUser = async (userData) => {
-    const { userEmail, userPassword, userName, userPhonehone, userMailingAddress, userBillingAddress, isBillingAddressSame, preferredPayment } = userData;
+    console.log("2. Service started");
 
-    // To check if the user already exists in the system
-    const existingUser = await prisma.user.findIfUserExists({
+    const {
+        userEmail,
+        userPassword,
+        userName,
+        userPhone,
+        userMailingAddress,
+        userBillingAddress,
+        isBillingAddressSame,
+        preferredPayment
+    } = userData;
+
+    console.log("3. Before findUnique");
+    const existingUser = await prisma.users.findUnique({
         where: {
-            userEmail,
-        }
+            email: userEmail,
+        },
     });
 
+    console.log("4. After findUnique");
     if (existingUser) {
-        throw new Error('User with this Email Id already Exists');
+        throw new Error('User with this Email Id already exists');
     }
 
-    const hashedPassword = await bycrypt.hash(userPassword, 10); // for 10, security is good and speed is balanced
-    const user = await prisma.user.createUser({
+    console.log("5. Before hash");
+    const hashedPassword = await bcrypt.hash(userPassword, 10);
+    console.log("6. After hash");
+
+    const user = await prisma.users.create({
         data: {
-            userEmail,
-            userPassword: hashedPassword,
-            userName,
-            userPhonehone,
-            userMailingAddress,
-            userBillingAddress: isBillingAddressSame ? userMailingAddress : userBillingAddressu,
-            isBillingAddressSame,
-            preferredPayment: preferredPayment || 'CASH',
-            isRegistered: true,
+            email: userEmail,
+            password_hash: hashedPassword,
+            name: userName,
+            phone: userPhone,
+            mailing_address: userMailingAddress,
+            billing_address: isBillingAddressSame
+                ? userMailingAddress
+                : userBillingAddress,
+            billing_same_as_mailing: isBillingAddressSame,
+            preferred_payment_method: preferredPayment || 'CASH',
+            preferred_diner_number: `DINER-${Date.now()}`
         },
         select: {
-            userId: true,
-            userEmail: true,
-            userName: true,
-            userPhone: true,
-            preferredDinerNum: true,
-            earnedPoints: true,
-            preferredPayment: true,
-            isRegistered: true,
-            createdAt: true,
+            id: true,
+            email: true,
+            name: true,
+            phone: true,
+            preferred_diner_number: true,
+            earned_points: true,
+            preferred_payment_method: true,
+            created_at: true,
         },
     });
 
-    const token = generateToken({ userId: user.userId, userEmail: user.userEmail });
+    console.log("7. After create");
+    const token = generateToken({
+        userId: user.id,
+        userEmail: user.email,
+    });
+
     return { user, token };
 };
 
 export const userLogin = async (userEmail, userPassword) => {
-
-    const user = await prisma.user.findIfUserExists({
-        where: { userEmail },
+    const user = await prisma.users.findUnique({
+        where: { email: userEmail },
     });
 
-    if (!user || !user.userPassword) {
+    if (!user || !user.password_hash) {
         throw new Error('Invalid email or password');
     }
 
-    // To check if the password is correct
-    const isPasswordValid = await bycrypt.compare(userPassword, user.userPassword);
+    const isPasswordValid = await bcrypt.compare(userPassword, user.password_hash);
 
     if (!isPasswordValid) {
-        throw new Error('Invalid Emnail or Password');
+        throw new Error('Invalid email or password');
     }
-    const token = generateToken({ userId: user.userId, userEmail: user.userEmail });
+
+    const token = generateToken({
+        userId: user.id,
+        userEmail: user.email,
+    });
+
     return {
         user: {
-            userId: user.userId,
-            userEmail: user.userEmail,
-            userName: user.userName,
-            userPhone: user.userPhone,
-            preferredDinerNum: user.preferredDinerNum,
-            earnedPoints: user.earnedPoints,
-            preferredPayment: user.preferredPayment,
-            isRegistered: user.isRegistered,
-        }, token,
+            userId: user.id,
+            userEmail: user.email,
+            userName: user.name,
+            userPhone: user.phone,
+            preferredDinerNum: user.preferred_diner_number,
+            earnedPoints: user.earned_points,
+            preferredPayment: user.preferred_payment_method,
+        },
+        token,
     };
 };
 
 export const createGuestUser = async (guestData) => {
     const { userName, userPhone, userEmail } = guestData;
 
-    let user = await prisma.user.findIfUserExists({
-        where: { userEmail },
+    let user = await prisma.users.findUnique({
+        where: { email: userEmail },
     });
+
     if (!user) {
-        user = await prisma.user.create({
+        user = await prisma.users.create({
             data: {
-                userEmail,
-                userName,
-                userPhone,
-                isRegistered: false,
-            }
+                email: userEmail,
+                name: userName,
+                phone: userPhone,
+                preferred_diner_number: `GUEST-${Date.now()}`,
+                password_hash: '',
+            },
         });
     }
+
     return user;
 };
 
-
 export const upgradeGuestToRegistered = async (userId, registrationData) => {
-    const { userPassword, userMailingAddressailingAddress, billingAddress, billingAddressSame, preferredPayment } = registrationData;
+    const {
+        userPassword,
+        userMailingAddress,
+        userBillingAddress,
+        isBillingAddressSame,
+        preferredPayment,
+    } = registrationData;
 
-    const hashedPassword = await bcrypt.hash(password, 10);
+    const hashedPassword = await bcrypt.hash(userPassword, 10);
 
-    const updatedUser = await prisma.user.update({
+    const updatedUser = await prisma.users.update({
         where: { id: userId },
         data: {
-            userPassword: hashedPassword,
-            userMailingAddress: mailingAddress,
-            userBillingAddress: billingAddressSame ? mailingAddress : billingAddress,
-            isBillingAddressSame: billingAddressSame,
-            preferredPayment: preferredPayment || 'CASH',
-            isRegistered: true,
+            password_hash: hashedPassword,
+            mailing_address: userMailingAddress,
+            billing_address: isBillingAddressSame
+                ? userMailingAddress
+                : userBillingAddress,
+            billing_same_as_mailing: isBillingAddressSame,
+            preferred_payment_method: preferredPayment || 'CASH',
         },
         select: {
-            userId: true,
-            userEmail: true,
-            userName: true,
-            userPhone: true,
-            preferredDinerNum: true,
-            earnedPoints: true,
-            preferredPayment: true,
-            isRegistered: true,
+            id: true,
+            email: true,
+            name: true,
+            phone: true,
+            preferred_diner_number: true,
+            earned_points: true,
+            preferred_payment_method: true,
         },
     });
 
-    const token = generateToken({ userId: updatedUser.userId, userEmail: updatedUser.userEmail });
+    const token = generateToken({
+        userId: updatedUser.id,
+        userEmail: updatedUser.email,
+    });
 
     return { user: updatedUser, token };
 };

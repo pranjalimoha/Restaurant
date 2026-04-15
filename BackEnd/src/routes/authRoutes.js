@@ -6,7 +6,8 @@ import { validate } from '../middleware/validateMiddleware.js';
 
 const router = express.Router();
 
-router.post('/register',
+router.post(
+    '/register',
     [
         body('userEmail').isEmail().withMessage('Please provide a valid email address'),
         body('userPassword').isLength({ min: 12 }).withMessage('Password must be at least 12 characters long'),
@@ -21,7 +22,7 @@ router.post('/register',
     authController.registerUser
 );
 
-//login route
+// login route
 router.post(
     '/login',
     [
