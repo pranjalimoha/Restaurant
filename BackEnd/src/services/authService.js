@@ -3,8 +3,6 @@ import prisma from '../lib/prisma.js';
 import { generateToken } from '../utils/jwt.js';
 
 export const registerUser = async (userData) => {
-    console.log("2. Service started");
-
     const {
         userEmail,
         userPassword,
@@ -16,22 +14,17 @@ export const registerUser = async (userData) => {
         preferredPayment
     } = userData;
 
-    console.log("3. Before findUnique");
     const existingUser = await prisma.users.findUnique({
         where: {
             email: userEmail,
         },
     });
 
-    console.log("4. After findUnique");
     if (existingUser) {
         throw new Error('User with this Email Id already exists');
     }
 
-    console.log("5. Before hash");
     const hashedPassword = await bcrypt.hash(userPassword, 10);
-    console.log("6. After hash");
-
     const user = await prisma.users.create({
         data: {
             email: userEmail,
@@ -58,7 +51,6 @@ export const registerUser = async (userData) => {
         },
     });
 
-    console.log("7. After create");
     const token = generateToken({
         userId: user.id,
         userEmail: user.email,

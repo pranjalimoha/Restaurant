@@ -1,20 +1,20 @@
 import express from 'express';
 import cors from 'cors';
-import dotenv from 'dotenv';
 import authRoutes from './routes/authRoutes.js';
+import reservationRoutes from './routes/reservationRoutes.js';
 import { errorHandler, notFound } from './middleware/errorMiddleware.js';
+import tableRoutes from './routes/tableRoutes.js';
+//import userRoutes from './routes/userRoutes.js';
 
 const app = express();
 
 app.use(cors());
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 app.get('/', (req, res) => {
     res.json({ message: 'Backend is running' });
 });
-app.use(express.urlencoded({ extended: true }));
-
-// app.get()
 
 app.get('/health', (req, res) => {
     res.status(200).json({
@@ -23,12 +23,15 @@ app.get('/health', (req, res) => {
     });
 });
 
-//Routes
+// Routes
 app.use('/api/auth', authRoutes);
+app.use('/api/reservations', reservationRoutes);
+//app.use('/api/users', userRoutes);
+app.use('/api/tables', tableRoutes);
 
-
-// Error handling
+// Error handling must be LAST
 app.use(notFound);
 app.use(errorHandler);
+
 
 export default app;
