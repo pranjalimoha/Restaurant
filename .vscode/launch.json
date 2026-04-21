@@ -1,0 +1,13 @@
+{
+    "type": "node",
+    "request": "launch",
+    "name": "Debug Backend",
+    "program": "${workspaceFolder}/src/server.js",
+    "cwd": "${workspaceFolder}",
+    "envFile": "${workspaceFolder}/.env",
+    "skipFiles": [
+        "<node_internals>/**"
+    ],
+    "console": "integratedTerminal",
+    "sourceMaps": false
+}
