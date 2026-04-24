@@ -14,12 +14,14 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useReservationStore } from "../../../store/reservationFlowStore";
 import { GuestDetails } from "../../../types";
 import { guestDetailsSchema } from "../../../schema/reservationSchema";
+import { createReservation } from "../reservationApi";
 
 export default function ReservationDetailsPage() {
   const navigate = useNavigate();
 
   const selectedTable = useReservationStore((s) => s.selectedTable);
   const setGuestDetails = useReservationStore((s) => s.setGuestDetails);
+  const searchCriteria = useReservationStore((state) => state.searchCriteria);
 
   const {
     control,
@@ -35,10 +37,24 @@ export default function ReservationDetailsPage() {
     },
   });
 
-  const onSubmit = (values: GuestDetails) => {
-    setGuestDetails(values);
-    navigate("/reservation/confirmation");
-  };
+const onSubmit = async (values: GuestDetails) => {
+  if (!searchCriteria || !selectedTable) {
+    navigate("/reservation");
+    return;
+  }
+  setGuestDetails(values);
+  try {
+    const response = await createReservation({
+      searchCriteria,
+      selectedTable,
+      guestInfo: values,
+    });
+
+    navigate(`/reservation/confirmation/${response.data.reservation.id}`);
+  } catch (error) {
+    console.error(error);
+  }
+};
 
   // 🔒 Guard (IMPORTANT)
   if (!selectedTable) {
@@ -117,7 +133,6 @@ export default function ReservationDetailsPage() {
                     />
                   )}
                 />
-
                 <Button type="submit" variant="contained" size="large" disabled={isSubmitting}>
                   Continue
                 </Button>

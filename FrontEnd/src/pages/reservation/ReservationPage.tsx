@@ -20,33 +20,7 @@ import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useReservationStore } from "../../store/reservationFlowStore";
 import { reservationSearchSchema } from "../../schema/reservationSchema";
-
-const mockReservationOptions: ReservationOption[] = [
-  {
-    id: "option-1",
-    tableIds: ["table-6"],
-    tableNumbers: [6],
-    totalCapacity: 8,
-    tablesNeedCombining: false,
-    wastedSeats: 0,
-  },
-  {
-    id: "option-2",
-    tableIds: ["table-3", "table-4"],
-    tableNumbers: [3, 4],
-    totalCapacity: 8,
-    tablesNeedCombining: true,
-    wastedSeats: 0,
-  },
-  {
-    id: "option-3",
-    tableIds: ["table-1", "table-5"],
-    tableNumbers: [1, 5],
-    totalCapacity: 8,
-    tablesNeedCombining: true,
-    wastedSeats: 0,
-  },
-];
+import { searchAvailableTables } from "../reservation/reservationApi";
 
 export default function ReservationPage() {
   const navigate = useNavigate();
@@ -71,17 +45,53 @@ export default function ReservationPage() {
     },
   });
 
+function mapBackendResultsToOptions(
+  data: any,
+  numberOfGuests: number,
+): ReservationOption[] {
+  const directTableOptions: ReservationOption[] = data.availableTables.map(
+    (table: any) => ({
+      id: `table-option-${table.id}`,
+      tableIds: [table.id],
+      tableNumbers: [table.table_number],
+      totalCapacity: table.capacity,
+      tablesNeedCombining: false,
+      wastedSeats: table.capacity - numberOfGuests,
+    }),
+  );
+
+  const combinationOptions: ReservationOption[] = data.suggestedCombinations.map(
+    (combo: any, index: number) => ({
+      id: `combo-option-${index}`,
+      tableIds: combo.tables.map((table: any) => table.id),
+      tableNumbers: combo.tables.map((table: any) => table.table_number),
+      totalCapacity: combo.totalCapacity,
+      tablesNeedCombining: combo.needsCombination,
+      wastedSeats: combo.totalCapacity - numberOfGuests,
+    }),
+  );
+
+  return [...directTableOptions, ...combinationOptions];
+}
+
   const onSubmit = async (values: ReservationSearchFormValues) => {
     setHasSearched(true);
     setIsSearching(true);
     setSearchCriteria(values);
-    await new Promise((resolve) => setTimeout(resolve, 500));
-    const filteredOptions = mockReservationOptions.filter(
-      (option) => option.totalCapacity >= values.numberOfGuests,
-    );
-    setAvailableTables(filteredOptions);
-    setIsSearching(false);
-  };
+    try {
+      const response = await searchAvailableTables(values);
+      const options = mapBackendResultsToOptions(
+        response.data,
+        values.numberOfGuests,
+      );
+      setAvailableTables(options);
+    } catch (error) {
+      console.error(error);
+      setAvailableTables([]);
+    } finally {
+      setIsSearching(false);
+    }
+};
 
   const handleSelectTable = (option: ReservationOption) => {
     selectTable(option);

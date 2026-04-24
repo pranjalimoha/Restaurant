@@ -16,19 +16,12 @@ export type ReservationSearchFormValues = {
   numberOfGuests: GuestCount;
 };
 
-export type GuestReservationDetailsFormValues = {
-  fullName: string;
-  email: string;
-  phoneNumber: string;
-  specialRequests: string;
-};
-
 // =====================
 // DOMAIN TYPES
 // =====================
 
 export type ReservationOption = {
-  id: string;
+  id: string;d
   tableIds: string[];
   tableNumbers: number[];
   totalCapacity: number;
@@ -84,6 +77,7 @@ export type GuestDetails = {
   lastName: string;
   email: string;
   phone: string;
+  specialRequest?: string;
 };
 
 export type ApiResponse<T> = ApiSuccessResponse<T> | ApiErrorResponse;
@@ -96,7 +90,6 @@ export type ReservationFlowState = {
   searchCriteria: ReservationSearchFormValues | null;
   availableTables: ReservationOption[];
   selectedTable: ReservationOption | null;
-  guestInfo: GuestReservationDetailsFormValues | null;
   reservationConfirmation: ReservationConfirmation | null;
   guestDetails: GuestDetails | null;
 };
