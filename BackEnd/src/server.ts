@@ -3,7 +3,8 @@ import http from "node:http";
 import app from "./app.js";
 import prisma from "./lib/prisma.js";
 
-const PORT = process.env.PORT || 5001;
+const PORT = Number(process.env.PORT) || 5001;
+const HOST = "0.0.0.0";
 
 async function startServer() {
   try {
@@ -12,9 +13,9 @@ async function startServer() {
 
     const server = http.createServer(app);
 
-    server.listen(PORT, () => {
-      console.log(`Server running on port ${PORT}`);
-    });
+    server.listen(PORT, HOST, () => {
+    console.log(`Server running on http://${HOST}:${PORT}`);
+  });
 
     server.on("error", (error) => {
       console.error("Server error:", error);
