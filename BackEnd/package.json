@@ -6,9 +6,9 @@
   "type": "module",
   "scripts": {
     "dev": "tsx watch src/server.ts",
-    "build": "tsc",
+    "build": "prisma generate && prisma db push",
     "start": "tsx src/server.ts",
-    "db:generate": "prisma generate",
+    "postinstall": "prisma generate",
     "db:push": "prisma db push",
     "db:seed": "node src/lib/seed.js",
     "db:reset": "prisma db push --force-reset && node src/lib/seed.js",
@@ -30,6 +30,7 @@
     "express-validator": "^7.3.2",
     "jsonwebtoken": "^9.0.3",
     "mariadb": "^3.5.2",
+    "tsx": "^4.21.0",
     "prisma": "^7.7.0"
   },
   "devDependencies": {
@@ -38,7 +39,6 @@
     "@types/express": "^5.0.6",
     "@types/node": "^25.6.0",
     "nodemon": "^3.1.14",
-    "tsx": "^4.21.0",
     "typescript": "^6.0.3"
   }
 }
