@@ -50,6 +50,25 @@ export type ReservationConfirmation = {
   specialDayReason?: string | null;
 };
 
+export type ReservationDetails = {
+  id: string;
+  guest_name: string | null;
+  guest_email: string | null;
+  guest_phone: string | null;
+  reservation_date: string;
+  reservation_time: string;
+  number_of_guests: number;
+  status: string;
+  requires_holding_fee: boolean;
+  holding_fee_amount: string;
+  reservation_tables: {
+    restaurant_tables: {
+      table_number: number;
+      capacity: number;
+    };
+  }[];
+};
+
 // =====================
 // API TYPES
 // =====================

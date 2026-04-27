@@ -123,6 +123,7 @@ export const createReservation = async (
   }
 
   const isHighTrafficDay = await checkIfHighTrafficDay(reservationDate);
+const holdingFeeAmount = isHighTrafficDay ? 10.0 : 0;
 
   const result = await getAvailableTablesForReservation(
     reservationDate,
@@ -194,7 +195,7 @@ export const createReservation = async (
       number_of_guests: numberOfGuests,
       requires_holding_fee: isHighTrafficDay,
       holding_fee_paid: false,
-      holding_fee_amount: isHighTrafficDay ? 10.0 : 0,
+      holding_fee_amount: holdingFeeAmount,
       tables_need_combining: needsCombination,
       special_requests: specialRequests,
       status: isHighTrafficDay ? "PENDING" : "CONFIRMED",

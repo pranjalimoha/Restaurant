@@ -15,6 +15,7 @@ import { useReservationStore } from "../../../store/reservationFlowStore";
 import { GuestDetails } from "../../../types";
 import { guestDetailsSchema } from "../../../schema/reservationSchema";
 import { createReservation } from "../reservationApi";
+import { useState } from "react";
 
 export default function ReservationDetailsPage() {
   const navigate = useNavigate();
@@ -22,6 +23,7 @@ export default function ReservationDetailsPage() {
   const selectedTable = useReservationStore((s) => s.selectedTable);
   const setGuestDetails = useReservationStore((s) => s.setGuestDetails);
   const searchCriteria = useReservationStore((state) => state.searchCriteria);
+  const [submitError, setSubmitError] = useState("");
 
   const {
     control,
@@ -37,26 +39,39 @@ export default function ReservationDetailsPage() {
     },
   });
 
-const onSubmit = async (values: GuestDetails) => {
-  if (!searchCriteria || !selectedTable) {
-    navigate("/reservation");
-    return;
-  }
-  setGuestDetails(values);
-  try {
-    const response = await createReservation({
-      searchCriteria,
-      selectedTable,
-      guestInfo: values,
-    });
+  const onSubmit = async (values: GuestDetails) => {
+    if (!searchCriteria || !selectedTable) {
+      navigate("/reservation");
+      return;
+    }
 
-    navigate(`/reservation/confirmation/${response.data.reservation.id}`);
-  } catch (error) {
-    console.error(error);
-  }
-};
+    setSubmitError("");
+    setGuestDetails(values);
 
-  // 🔒 Guard (IMPORTANT)
+    try {
+      const response = await createReservation({
+        searchCriteria,
+        selectedTable,
+        guestInfo: values,
+      });
+
+      const reservation = response.data;
+
+      if (reservation.requiresHoldingFee) {
+        navigate(`/reservation/payment/${reservation.reservation.id}`);
+      } else {
+        navigate(`/reservation/confirmation/${reservation.reservation.id}`);
+      }
+    } catch (error) {
+      const message =
+        error instanceof Error
+          ? error.message
+          : "Something went wrong while creating the reservation.";
+
+      setSubmitError(message);
+    }
+  };
+
   if (!selectedTable) {
     return (
       <Container>
@@ -134,8 +149,9 @@ const onSubmit = async (values: GuestDetails) => {
                   )}
                 />
                 <Button type="submit" variant="contained" size="large" disabled={isSubmitting}>
-                  Continue
+                  {isSubmitting ? "Creating Reservation..." : "Continue"}
                 </Button>
+                {submitError ? <Typography color="error">{submitError}</Typography> : null}
               </Stack>
             </CardContent>
           </Card>
