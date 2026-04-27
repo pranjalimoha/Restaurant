@@ -21,7 +21,7 @@ export type ReservationSearchFormValues = {
 // =====================
 
 export type ReservationOption = {
-  id: string;d
+  id: string;
   tableIds: string[];
   tableNumbers: number[];
   totalCapacity: number;
@@ -90,6 +90,14 @@ export type ReservationFlowState = {
   searchCriteria: ReservationSearchFormValues | null;
   availableTables: ReservationOption[];
   selectedTable: ReservationOption | null;
+  guestInfo: GuestReservationDetailsFormValues | null;
   reservationConfirmation: ReservationConfirmation | null;
   guestDetails: GuestDetails | null;
+};
+
+export type GuestReservationDetailsFormValues = {
+  guestName: string;
+  guestEmail: string;
+  guestPhone: string;
+  specialRequests?: string;
 };

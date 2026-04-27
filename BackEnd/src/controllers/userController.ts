@@ -7,17 +7,33 @@ import type {
   UpdateUserProfileRequest,
 } from "../types.js";
 
-function getAuthenticatedUserId(req: AppRequest): string | null {
-  return req.user?.id ?? req.userId ?? null;
+function getAuthenticatedUserId<T>(
+  req: AppRequest<T> & {
+    user?: { id?: string; userId?: string };
+    userId?: string;
+  }
+): string | null {
+  return req.user?.id ?? req.user?.userId ?? req.userId ?? null;
 }
 
 export const getUserProfile = async (
   req: AppRequest,
   res: AppResponse,
-  next: AppNext,
+  next: AppNext
 ) => {
   try {
-    const userId = getAuthenticatedUserId(req);
+    // Cast req to include auth fields added by middleware
+    const authReq = req as AppRequest & {
+      user?: { id?: string; userId?: string };
+      userId?: string;
+    };
+
+    // Get userId safely
+    const userId =
+      authReq.user?.id ??
+      authReq.user?.userId ??
+      authReq.userId ??
+      null;
 
     if (!userId) {
       return res.status(401).json({

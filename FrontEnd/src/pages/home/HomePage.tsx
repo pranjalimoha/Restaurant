@@ -25,7 +25,7 @@ export default function HomePage() {
         <Toolbar className={styles.toolbar}>
           <Box className={styles.brandWrap}>
             <Typography noWrap variant="h4" className={styles.brandTitle}>
-              Restaurant Placeholder
+              Reserve & Dine
             </Typography>
           </Box>
           <Button
@@ -90,40 +90,16 @@ export default function HomePage() {
             </Card>
           </Stack>
 
-          <Card className={styles.reserveCard}>
-            <CardContent className={styles.reserveCardContent}>
-              <Stack spacing={3}>
-                <Stack
-                  direction={{ xs: "column", md: "row" }}
-                  spacing={2}
-                  className={styles.reserveHeader}
-                >
-                  <Box className={styles.reserveHeadingWrap}>
-                    <Typography variant="h2" className={styles.reserveTitle}>
-                      Reserve a Table
-                    </Typography>
-
-                    <Typography variant="h6" className={styles.reserveSubtitle}>
-                      Start your reservation in just a few steps.
-                    </Typography>
-                  </Box>
-
-                  <Box className={styles.reserveIconBox}>
-                    <RestaurantOutlinedIcon className={styles.reserveIcon} />
-                  </Box>
-                </Stack>
-
-                <Button
-                  variant="contained"
-                  size="large"
-                  onClick={() => navigate("/reservation")}
-                  className={styles.reserveButton}
-                >
-                  Search Available Tables
-                </Button>
-              </Stack>
-            </CardContent>
-          </Card>
+          <Box className={styles.infoSection}>
+            <Box className={styles.overlay}>
+              <Typography className={styles.infoText}>
+                Reservations are highly recommended. Please let us know if there is anything
+                we can do to enhance your dining experience. If your preferred date or time
+                is unavailable, please call us and we will do our best to accommodate your
+                desired date and time.
+              </Typography>
+            </Box>
+          </Box>
         </Stack>
       </Container>
     </Box>
