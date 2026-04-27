@@ -1,7 +1,18 @@
 import bcrypt from "bcryptjs";
 import prisma from "../lib/prisma.js";
+import type { users_preferred_payment_method } from "@prisma/client";
+import type { users } from "@prisma/client";
 
-export const getUserProfile = async (userId) => {
+type UpdateUserData = {
+  name?: string;
+  phone?: string;
+  mailing_address?: string;
+  billing_address?: string;
+  billing_same_as_mailing?: boolean;
+  preferred_payment_method?: users_preferred_payment_method | null;
+};
+
+export const getUserProfile = async (userId: string): Promise<any> => {
   const user = await prisma.users.findUnique({
     where: { id: userId },
     select: {
@@ -12,6 +23,7 @@ export const getUserProfile = async (userId) => {
       mailing_address: true,
       billing_address: true,
       billing_same_as_mailing: true,
+      preferred_diner_number: true,
       earned_points: true,
       preferred_payment_method: true,
       isRegistered: true,
@@ -19,10 +31,14 @@ export const getUserProfile = async (userId) => {
       updated_at: true,
     },
   });
+
   return user;
 };
 
-export const updateUserProfile = async (userId, updatedData) => {
+export const updateUserProfile = async (
+  userId: string,
+  updatedData: UpdateUserData
+) => {
   const {
     name,
     phone,
@@ -32,12 +48,14 @@ export const updateUserProfile = async (userId, updatedData) => {
     preferred_payment_method,
   } = updatedData;
 
-  const data = {
-    ...(name !== undefined && { name }), //if (name !== undefined) data.name = name;
+  const data: UpdateUserData = {
+    ...(name !== undefined && { name }),
     ...(phone !== undefined && { phone }),
     ...(mailing_address !== undefined && { mailing_address }),
     ...(billing_same_as_mailing !== undefined && { billing_same_as_mailing }),
-    ...(preferred_payment_method !== undefined && { preferred_payment_method }),
+    ...(preferred_payment_method !== undefined && {
+      preferred_payment_method,
+    }),
   };
 
   if (billing_same_as_mailing === true && mailing_address !== undefined) {
@@ -70,7 +88,11 @@ export const updateUserProfile = async (userId, updatedData) => {
   return user;
 };
 
-export const changePassword = async (userId, currentPassword, newPassword) => {
+export const changePassword = async (
+  userId: string,
+  currentPassword: string,
+  newPassword: string
+) => {
   const user = await prisma.users.findUnique({
     where: { id: userId },
   });
@@ -81,12 +103,13 @@ export const changePassword = async (userId, currentPassword, newPassword) => {
 
   const isPasswordValid = await bcrypt.compare(
     currentPassword,
-    user.password_hash,
+    user.password_hash
   );
 
   if (!isPasswordValid) {
     throw new Error("Current password is incorrect");
   }
+
   const hashedPassword = await bcrypt.hash(newPassword, 10);
 
   await prisma.users.update({
@@ -97,7 +120,7 @@ export const changePassword = async (userId, currentPassword, newPassword) => {
   return { message: "Password updated successfully" };
 };
 
-export const getUserReservationHistory = async (userId) => {
+export const getUserReservationHistory = async (userId: string) => {
   return await prisma.reservations.findMany({
     where: { user_id: userId },
     include: {
@@ -111,7 +134,7 @@ export const getUserReservationHistory = async (userId) => {
   });
 };
 
-export const getUserPayments = async (userId) => {
+export const getUserPayments = async (userId: string) => {
   return await prisma.transactions.findMany({
     where: { user_id: userId },
     include: {
