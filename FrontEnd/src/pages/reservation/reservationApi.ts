@@ -6,6 +6,8 @@ type CreateReservationPayload = {
   guestInfo: GuestDetails;
 };
 
+const API_URL = import.meta.env.VITE_API_URL;
+
 export async function createReservation(payload: CreateReservationPayload) {
   const requestBody = {
     guestName: `${payload.guestInfo.firstName} ${payload.guestInfo.lastName}`,
@@ -18,7 +20,7 @@ export async function createReservation(payload: CreateReservationPayload) {
     specialRequests: payload.guestInfo.specialRequest,
   };
   console.log("Create reservation request body:", requestBody);
-  const response = await fetch("http://localhost:5001/api/reservations", {
+  const response = await fetch(`${API_URL}/api/reservations`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -38,12 +40,20 @@ export async function searchAvailableTables(values: ReservationSearchFormValues)
     time: values.time,
     numberOfGuests: String(values.numberOfGuests),
   });
-  const API_URL = "http://localhost:5001";
 
   const response = await fetch(`${API_URL}/api/reservations/search?${params}`);
   const data = await response.json();
   if (!response.ok) {
     throw new Error(data.message || "Failed to search available tables");
+  }
+  return data;
+}
+
+export async function getReservationById(id: string) {
+  const response = await fetch(`${API_URL}/api/reservations/${id}`);
+  const data = await response.json();
+  if (!response.ok) {
+    throw new Error(data.message || "Failed to load reservation");
   }
   return data;
 }

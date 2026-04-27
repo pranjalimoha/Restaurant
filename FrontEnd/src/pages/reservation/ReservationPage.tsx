@@ -45,34 +45,47 @@ export default function ReservationPage() {
     },
   });
 
-function mapBackendResultsToOptions(
-  data: any,
-  numberOfGuests: number,
-): ReservationOption[] {
-  const directTableOptions: ReservationOption[] = data.availableTables.map(
-    (table: any) => ({
+  type BackendTable = {
+    id: string;
+    table_number: string | number;
+    capacity: number;
+  };
+
+  type BackendCombination = {
+    tables: BackendTable[];
+    totalCapacity: number;
+    needsCombination: boolean;
+  };
+
+  type BackendAvailabilityData = {
+    availableTables: BackendTable[];
+    suggestedCombinations: BackendCombination[];
+  };
+
+  function mapBackendResultsToOptions(
+    data: BackendAvailabilityData,
+    numberOfGuests: number,
+  ): ReservationOption[] {
+    const directTableOptions = data.availableTables.map((table) => ({
       id: `table-option-${table.id}`,
       tableIds: [table.id],
-      tableNumbers: [table.table_number],
+      tableNumbers: [Number(table.table_number)],
       totalCapacity: table.capacity,
       tablesNeedCombining: false,
       wastedSeats: table.capacity - numberOfGuests,
-    }),
-  );
+    }));
 
-  const combinationOptions: ReservationOption[] = data.suggestedCombinations.map(
-    (combo: any, index: number) => ({
+    const combinationOptions = data.suggestedCombinations.map((combo, index) => ({
       id: `combo-option-${index}`,
-      tableIds: combo.tables.map((table: any) => table.id),
-      tableNumbers: combo.tables.map((table: any) => table.table_number),
+      tableIds: combo.tables.map((table) => table.id),
+      tableNumbers: combo.tables.map((table) => Number(table.table_number)),
       totalCapacity: combo.totalCapacity,
       tablesNeedCombining: combo.needsCombination,
       wastedSeats: combo.totalCapacity - numberOfGuests,
-    }),
-  );
+    }));
 
-  return [...directTableOptions, ...combinationOptions];
-}
+    return [...directTableOptions, ...combinationOptions];
+  }
 
   const onSubmit = async (values: ReservationSearchFormValues) => {
     setHasSearched(true);
@@ -80,10 +93,7 @@ function mapBackendResultsToOptions(
     setSearchCriteria(values);
     try {
       const response = await searchAvailableTables(values);
-      const options = mapBackendResultsToOptions(
-        response.data,
-        values.numberOfGuests,
-      );
+      const options = mapBackendResultsToOptions(response.data, values.numberOfGuests);
       setAvailableTables(options);
     } catch (error) {
       console.error(error);
@@ -91,7 +101,7 @@ function mapBackendResultsToOptions(
     } finally {
       setIsSearching(false);
     }
-};
+  };
 
   const handleSelectTable = (option: ReservationOption) => {
     selectTable(option);
@@ -174,6 +184,8 @@ function mapBackendResultsToOptions(
                         fullWidth
                         select
                         label="Number of Guests"
+                        value={field.value}
+                        onChange={(event) => field.onChange(Number(event.target.value))}
                         error={Boolean(errors.numberOfGuests)}
                         helperText={errors.numberOfGuests?.message}
                       >

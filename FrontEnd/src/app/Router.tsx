@@ -21,7 +21,10 @@ export const router = createBrowserRouter([
       { path: "/", element: <HomePage /> },
       { path: "/reservation", element: <ReservationPage /> },
       { path: "/reservation/details", element: <ReservationDetailsPage /> },
-      { path: "/reservation/payment", element: <ReservationPaymentPage /> },
+      {
+        path: "/reservation/payment/:id",
+        element: <ReservationPaymentPage />,
+      },
       {
         path: "/reservation/confirmation/:id",
         element: <ReservationConfirmationPage />,
