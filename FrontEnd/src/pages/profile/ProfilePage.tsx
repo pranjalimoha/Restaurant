@@ -52,9 +52,7 @@ export default function ProfilePage() {
       <div className={styles.header}>
         <div className={styles.headerLeft}>
           <h1>Welcome back, {profile.name}!</h1>
-          <p className={styles.diner}>
-            Preferred Diner #: {profile.preferred_diner_number}
-          </p>
+          <p className={styles.diner}>Preferred Diner #: {profile.preferred_diner_number}</p>
         </div>
 
         <div className={styles.headerRight}>
@@ -63,9 +61,7 @@ export default function ProfilePage() {
             <h2>{profile.earned_points}</h2>
           </div>
 
-          <p className={styles.pointsNote}>
-            Earn 1 point for every $1 spent
-          </p>
+          <p className={styles.pointsNote}>Earn 1 point for every $1 spent</p>
 
           <button onClick={handleLogout} className={styles.logout}>
             Logout
@@ -74,10 +70,7 @@ export default function ProfilePage() {
       </div>
 
       {/* CTA */}
-      <button
-        className={styles.cta}
-        onClick={() => navigate("/reservation")}
-      >
+      <button className={styles.cta} onClick={() => navigate("/reservation")}>
         + Make a New Reservation
       </button>
 
@@ -137,7 +130,6 @@ export default function ProfilePage() {
               </p>
             </div>
           </div>
-
         )}
 
         {/* RESERVATIONS */}
@@ -151,14 +143,20 @@ export default function ProfilePage() {
                   <span className={styles.status}>{r.status}</span>
 
                   <div className={styles.resGrid}>
-                    <p><b>Date:</b> {r.reservation_date}</p>
-                    <p><b>Time:</b> {r.reservation_time}</p>
-                    <p><b>Guests:</b> {r.number_of_guests}</p>
+                    <p>
+                      <b>Date:</b> {r.reservation_date}
+                    </p>
+                    <p>
+                      <b>Time:</b> {r.reservation_time}
+                    </p>
+                    <p>
+                      <b>Guests:</b> {r.number_of_guests}
+                    </p>
                     <p>
                       <b>Tables:</b>{" "}
-                      {r.reservation_tables?.map((t: any) =>
-                        t.restaurant_tables?.table_number
-                      ).join(", ")}
+                      {r.reservation_tables
+                        ?.map((t: any) => t.restaurant_tables?.table_number)
+                        .join(", ")}
                     </p>
                   </div>
                 </div>
