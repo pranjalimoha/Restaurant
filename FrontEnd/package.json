@@ -25,6 +25,7 @@
     "@mui/material": "^9.0.0",
     "@stripe/react-stripe-js": "^6.1.0",
     "@stripe/stripe-js": "^9.1.0",
+    "axios": "^1.15.2",
     "css-modules": "^0.3.0",
     "dayjs": "^1.11.20",
     "jwt-decode": "^4.0.0",

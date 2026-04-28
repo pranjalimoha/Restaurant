@@ -16,13 +16,6 @@ export type ReservationSearchFormValues = {
   numberOfGuests: GuestCount;
 };
 
-export type GuestReservationDetailsFormValues = {
-  fullName: string;
-  email: string;
-  phoneNumber: string;
-  specialRequests: string;
-};
-
 // =====================
 // DOMAIN TYPES
 // =====================
@@ -84,6 +77,7 @@ export type GuestDetails = {
   lastName: string;
   email: string;
   phone: string;
+  specialRequest?: string;
 };
 
 export type ApiResponse<T> = ApiSuccessResponse<T> | ApiErrorResponse;
@@ -99,4 +93,11 @@ export type ReservationFlowState = {
   guestInfo: GuestReservationDetailsFormValues | null;
   reservationConfirmation: ReservationConfirmation | null;
   guestDetails: GuestDetails | null;
+};
+
+export type GuestReservationDetailsFormValues = {
+  guestName: string;
+  guestEmail: string;
+  guestPhone: string;
+  specialRequests?: string;
 };
