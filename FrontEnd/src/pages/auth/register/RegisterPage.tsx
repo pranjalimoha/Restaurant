@@ -38,7 +38,6 @@ export default function RegisterPage() {
     resetRegisterForm();
   }, []);
 
-
   const handleRegister = async () => {
     try {
       setError(null);
@@ -140,18 +139,14 @@ export default function RegisterPage() {
                     label="Mailing Address"
                     placeholder="Enter your mailing address"
                     value={registerForm.mailingAddress}
-                    onChange={(e) =>
-                      setRegisterField("mailingAddress", e.target.value)
-                    }
+                    onChange={(e) => setRegisterField("mailingAddress", e.target.value)}
                   />
 
                   <FormControlLabel
                     control={
                       <Checkbox
                         checked={registerForm.billingSameAsMailing}
-                        onChange={(e) =>
-                          setRegisterField("billingSameAsMailing", e.target.checked)
-                        }
+                        onChange={(e) => setRegisterField("billingSameAsMailing", e.target.checked)}
                       />
                     }
                     label="Billing address same as mailing address"
@@ -163,9 +158,7 @@ export default function RegisterPage() {
                       label="Billing Address"
                       placeholder="Enter your billing address"
                       value={registerForm.billingAddress}
-                      onChange={(e) =>
-                        setRegisterField("billingAddress", e.target.value)
-                      }
+                      onChange={(e) => setRegisterField("billingAddress", e.target.value)}
                     />
                   )}
 
@@ -174,9 +167,7 @@ export default function RegisterPage() {
                     select
                     label="Preferred Payment"
                     value={registerForm.preferredPayment}
-                    onChange={(e) =>
-                      setRegisterField("preferredPayment", e.target.value)
-                    }
+                    onChange={(e) => setRegisterField("preferredPayment", e.target.value)}
                   >
                     <MenuItem value="CASH">Cash</MenuItem>
                     <MenuItem value="CREDIT">Credit</MenuItem>
@@ -225,10 +216,7 @@ export default function RegisterPage() {
                     Already have an account?
                   </Typography>
 
-                  <Button
-                    onClick={() => navigate("/login")}
-                    className={styles.signInButton}
-                  >
+                  <Button onClick={() => navigate("/login")} className={styles.signInButton}>
                     Sign in
                   </Button>
                 </Box>

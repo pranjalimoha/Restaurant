@@ -14,8 +14,8 @@ async function startServer() {
     const server = http.createServer(app);
 
     server.listen(PORT, HOST, () => {
-    console.log(`Server running on http://${HOST}:${PORT}`);
-  });
+      console.log(`Server running on http://${HOST}:${PORT}`);
+    });
 
     server.on("error", (error) => {
       console.error("Server error:", error);

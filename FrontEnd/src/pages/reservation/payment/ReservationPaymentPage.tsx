@@ -1,14 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import {
-  Box,
-  Button,
-  Card,
-  CardContent,
-  Container,
-  Stack,
-  Typography,
-} from "@mui/material";
+import { Box, Button, Card, CardContent, Container, Stack, Typography } from "@mui/material";
 import { getReservationById } from "../reservationApi";
 import type { ReservationDetails } from "../../../types";
 
@@ -33,9 +25,7 @@ export default function ReservationPaymentPage() {
         setReservation(response.data);
       } catch (error) {
         const message =
-          error instanceof Error
-            ? error.message
-            : "Unable to load reservation payment details.";
+          error instanceof Error ? error.message : "Unable to load reservation payment details.";
 
         setErrorMessage(message);
       } finally {
@@ -58,9 +48,7 @@ export default function ReservationPaymentPage() {
     return (
       <Container sx={{ py: 6 }}>
         <Stack spacing={2}>
-          <Typography color="error">
-            {errorMessage || "Reservation not found."}
-          </Typography>
+          <Typography color="error">{errorMessage || "Reservation not found."}</Typography>
 
           <Button variant="contained" onClick={() => navigate("/reservation")}>
             Back to Reservations
@@ -83,8 +71,8 @@ export default function ReservationPaymentPage() {
               </Typography>
 
               <Typography>
-                This reservation falls on a designated high-traffic date
-                configured in our reservation system and requires a holding fee.
+                This reservation falls on a designated high-traffic date configured in our
+                reservation system and requires a holding fee.
               </Typography>
 
               <Typography sx={{ fontWeight: 700 }}>
@@ -92,9 +80,9 @@ export default function ReservationPaymentPage() {
               </Typography>
 
               <Typography sx={{ color: "#64748b" }}>
-                For this MVP demo, payment processing is represented by tracking
-                the holding-fee requirement in the database. Full card
-                authorization will be added in a future iteration.
+                For this MVP demo, payment processing is represented by tracking the holding-fee
+                requirement in the database. Full card authorization will be added in a future
+                iteration.
               </Typography>
 
               <Button

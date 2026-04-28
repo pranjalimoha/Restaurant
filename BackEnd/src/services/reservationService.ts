@@ -123,7 +123,7 @@ export const createReservation = async (
   }
 
   const isHighTrafficDay = await checkIfHighTrafficDay(reservationDate);
-const holdingFeeAmount = isHighTrafficDay ? 10.0 : 0;
+  const holdingFeeAmount = isHighTrafficDay ? 10.0 : 0;
 
   const result = await getAvailableTablesForReservation(
     reservationDate,
@@ -161,9 +161,7 @@ const holdingFeeAmount = isHighTrafficDay ? 10.0 : 0;
   }
 
   const finalUserId =
-  userId && userId !== "undefined" && userId !== "null"
-    ? userId
-    : null;
+    userId && userId !== "undefined" && userId !== "null" ? userId : null;
 
   if (finalUserId) {
     const existingUser = await prisma.users.findUnique({

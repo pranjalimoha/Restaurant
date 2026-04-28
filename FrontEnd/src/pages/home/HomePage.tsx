@@ -93,10 +93,9 @@ export default function HomePage() {
           <Box className={styles.infoSection}>
             <Box className={styles.overlay}>
               <Typography className={styles.infoText}>
-                Reservations are highly recommended. Please let us know if there is anything
-                we can do to enhance your dining experience. If your preferred date or time
-                is unavailable, please call us and we will do our best to accommodate your
-                desired date and time.
+                Reservations are highly recommended. Please let us know if there is anything we can
+                do to enhance your dining experience. If your preferred date or time is unavailable,
+                please call us and we will do our best to accommodate your desired date and time.
               </Typography>
             </Box>
           </Box>

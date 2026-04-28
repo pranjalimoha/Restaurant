@@ -37,7 +37,7 @@ export const getUserProfile = async (userId: string): Promise<any> => {
 
 export const updateUserProfile = async (
   userId: string,
-  updatedData: UpdateUserData
+  updatedData: UpdateUserData,
 ) => {
   const {
     name,
@@ -91,7 +91,7 @@ export const updateUserProfile = async (
 export const changePassword = async (
   userId: string,
   currentPassword: string,
-  newPassword: string
+  newPassword: string,
 ) => {
   const user = await prisma.users.findUnique({
     where: { id: userId },
@@ -103,7 +103,7 @@ export const changePassword = async (
 
   const isPasswordValid = await bcrypt.compare(
     currentPassword,
-    user.password_hash
+    user.password_hash,
   );
 
   if (!isPasswordValid) {

@@ -80,7 +80,6 @@ export default function LoginPage() {
       resetLoginForm();
       //navigate("/");
       navigate("/profile");
-
     } catch (err) {
       if (err instanceof Error) {
         setError(err.message);
@@ -126,9 +125,7 @@ export default function LoginPage() {
                     label="Email Address"
                     placeholder="Enter your email"
                     value={loginForm.email}
-                    onChange={(e) =>
-                      setLoginField("email", e.target.value)
-                    }
+                    onChange={(e) => setLoginField("email", e.target.value)}
                   />
 
                   <TextField
@@ -137,9 +134,7 @@ export default function LoginPage() {
                     type="password"
                     placeholder="Enter your password"
                     value={loginForm.password}
-                    onChange={(e) =>
-                      setLoginField("password", e.target.value)
-                    }
+                    onChange={(e) => setLoginField("password", e.target.value)}
                   />
                 </Stack>
 
@@ -165,10 +160,7 @@ export default function LoginPage() {
                     Don&apos;t have an account?
                   </Typography>
 
-                  <Button
-                    onClick={() => navigate("/register")}
-                    className={styles.registerButton}
-                  >
+                  <Button onClick={() => navigate("/register")} className={styles.registerButton}>
                     Create one
                   </Button>
                 </Box>
