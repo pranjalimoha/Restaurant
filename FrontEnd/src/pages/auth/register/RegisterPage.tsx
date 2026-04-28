@@ -1,6 +1,6 @@
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuthStore } from "../../../store/authStore";
-import { useEffect } from "react";
 import axios from "axios";
 
 import {
@@ -34,17 +34,40 @@ export default function RegisterPage() {
     resetRegisterForm,
   } = useAuthStore();
 
+  const [emailError, setEmailError] = useState("");
+  const [phoneError, setPhoneError] = useState("");
+  const [passwordError, setPasswordError] = useState("");
+
   useEffect(() => {
     resetRegisterForm();
   }, []);
 
-
   const handleRegister = async () => {
     try {
       setError(null);
+      setEmailError("");
+      setPhoneError("");
+      setPasswordError("");
+
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+      if (!emailRegex.test(registerForm.email)) {
+        setEmailError("Please enter a valid email address");
+        return;
+      }
+
+      if (registerForm.phone.trim().length < 10) {
+        setPhoneError("Please enter a valid phone number");
+        return;
+      }
+
+      if (registerForm.password.length < 12) {
+        setPasswordError("Password must be at least 12 characters long");
+        return;
+      }
 
       if (registerForm.password !== registerForm.confirmPassword) {
-        setError("Passwords do not match");
+        setPasswordError("Passwords do not match");
         return;
       }
 
@@ -68,10 +91,8 @@ export default function RegisterPage() {
         userPassword: registerForm.password,
       });
 
-      // store token
       localStorage.setItem("token", loginRes.data.data.token);
 
-      // go to profile
       resetRegisterForm();
       navigate("/profile");
     } catch (err: any) {
@@ -122,9 +143,15 @@ export default function RegisterPage() {
                   <TextField
                     fullWidth
                     label="Email Address"
+                    type="email"
                     placeholder="Enter your email"
                     value={registerForm.email}
-                    onChange={(e) => setRegisterField("email", e.target.value)}
+                    error={!!emailError}
+                    helperText={emailError}
+                    onChange={(e) => {
+                      setEmailError("");
+                      setRegisterField("email", e.target.value);
+                    }}
                   />
 
                   <TextField
@@ -132,7 +159,12 @@ export default function RegisterPage() {
                     label="Phone Number"
                     placeholder="Enter your phone number"
                     value={registerForm.phone}
-                    onChange={(e) => setRegisterField("phone", e.target.value)}
+                    error={!!phoneError}
+                    helperText={phoneError}
+                    onChange={(e) => {
+                      setPhoneError("");
+                      setRegisterField("phone", e.target.value);
+                    }}
                   />
 
                   <TextField
@@ -150,7 +182,10 @@ export default function RegisterPage() {
                       <Checkbox
                         checked={registerForm.billingSameAsMailing}
                         onChange={(e) =>
-                          setRegisterField("billingSameAsMailing", e.target.checked)
+                          setRegisterField(
+                            "billingSameAsMailing",
+                            e.target.checked
+                          )
                         }
                       />
                     }
@@ -190,7 +225,12 @@ export default function RegisterPage() {
                     placeholder="Create a password"
                     value={registerForm.password}
                     autoComplete="new-password"
-                    onChange={(e) => setRegisterField("password", e.target.value)}
+                    error={!!passwordError}
+                    helperText={passwordError}
+                    onChange={(e) => {
+                      setPasswordError("");
+                      setRegisterField("password", e.target.value);
+                    }}
                   />
 
                   <TextField
@@ -200,7 +240,11 @@ export default function RegisterPage() {
                     placeholder="Confirm your password"
                     value={registerForm.confirmPassword}
                     autoComplete="new-password"
-                    onChange={(e) => setRegisterField("confirmPassword", e.target.value)}
+                    error={!!passwordError}
+                    onChange={(e) => {
+                      setPasswordError("");
+                      setRegisterField("confirmPassword", e.target.value);
+                    }}
                   />
                 </Stack>
 
