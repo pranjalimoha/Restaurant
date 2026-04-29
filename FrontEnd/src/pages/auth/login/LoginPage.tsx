@@ -1,5 +1,5 @@
-import { useNavigate } from "react-router-dom";
-import { useAuthStore } from "../../../store/authStore";
+import ArrowBackRoundedIcon from "@mui/icons-material/ArrowBackRounded";
+import LoginRoundedIcon from "@mui/icons-material/LoginRounded";
 import {
   Box,
   Button,
@@ -10,8 +10,8 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import ArrowBackRoundedIcon from "@mui/icons-material/ArrowBackRounded";
-import LoginRoundedIcon from "@mui/icons-material/LoginRounded";
+import { useNavigate } from "react-router-dom";
+import { useAuthStore } from "../../../store/authStore";
 import styles from "./LoginPage.module.css";
 
 export default function LoginPage() {
@@ -160,10 +160,7 @@ export default function LoginPage() {
                     Don&apos;t have an account?
                   </Typography>
 
-                  <Button
-                    onClick={() => navigate("/register")}
-                    className={styles.registerButton}
-                  >
+                  <Button onClick={() => navigate("/register")} className={styles.registerButton}>
                     Create one
                   </Button>
                 </Box>

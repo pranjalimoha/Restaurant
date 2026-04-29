@@ -34,6 +34,20 @@ export async function createReservation(payload: CreateReservationPayload) {
   return data;
 }
 
+export async function authorizeHoldingFee(id: string) {
+  const response = await fetch(`${API_URL}/api/reservations/${id}/authorize-holding-fee`, {
+    method: "POST",
+  });
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error(data.message || "Failed to authorize holding fee");
+  }
+
+  return data;
+}
+
 export async function searchAvailableTables(values: ReservationSearchFormValues) {
   const params = new URLSearchParams({
     date: values.date,

@@ -1,4 +1,5 @@
-import { useNavigate } from "react-router-dom";
+import Groups2OutlinedIcon from "@mui/icons-material/Groups2Outlined";
+import HowToRegOutlinedIcon from "@mui/icons-material/HowToRegOutlined";
 import {
   AppBar,
   Box,
@@ -11,9 +12,7 @@ import {
   Toolbar,
   Typography,
 } from "@mui/material";
-import Groups2OutlinedIcon from "@mui/icons-material/Groups2Outlined";
-import HowToRegOutlinedIcon from "@mui/icons-material/HowToRegOutlined";
-import RestaurantOutlinedIcon from "@mui/icons-material/RestaurantOutlined";
+import { useNavigate } from "react-router-dom";
 import styles from "./HomePage.module.css";
 
 export default function HomePage() {

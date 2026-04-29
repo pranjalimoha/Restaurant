@@ -41,23 +41,45 @@ export const searchAvailableTables = async (
   }
 };
 
+export const authorizeHoldingFee = async (
+  req: AppRequest<EmptyBody, ReservationIdParams>,
+  res: AppResponse,
+  next: AppNext,
+) => {
+  try {
+    const { id } = req.params;
+
+    const result = await reservationService.authorizeHoldingFee(id);
+
+    res.status(200).json({
+      success: true,
+      message: "Holding fee authorized successfully",
+      data: result,
+    });
+    return;
+  } catch (error) {
+    next(error);
+  }
+};
+
 export const createReservation = async (
   req: AppRequest<CreateReservationRequest>,
   res: AppResponse,
   next: AppNext,
 ) => {
   try {
-    const userId = req.userId ?? "";
+    const userId = req.userId ?? null;
 
     const result = await reservationService.createReservation(req.body, userId);
 
-    return res.status(201).json({
+    res.status(201).json({
       success: true,
       message: "Reservation created successfully",
       data: result,
     });
+    return;
   } catch (error) {
-    return next(error);
+    next(error);
   }
 };
 

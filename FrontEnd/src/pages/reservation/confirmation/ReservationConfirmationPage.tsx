@@ -1,9 +1,9 @@
+import { Box, Button, Card, CardContent, Container, Stack, Typography } from "@mui/material";
+import dayjs from "dayjs";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { Box, Button, Card, CardContent, Container, Stack, Typography } from "@mui/material";
+import type { ReservationDetails } from "../../../types";
 import { getReservationById } from "../reservationApi";
-import dayjs from "dayjs";
-import { ReservationDetails } from "../../../types";
 
 export default function ReservationConfirmationPage() {
   const { id } = useParams();

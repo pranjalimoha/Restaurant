@@ -51,9 +51,7 @@ export default function ProfilePage() {
       <div className={styles.header}>
         <div className={styles.headerLeft}>
           <h1>Welcome back, {profile.name}!</h1>
-          <p className={styles.diner}>
-            Preferred Diner #: {profile.preferred_diner_number}
-          </p>
+          <p className={styles.diner}>Preferred Diner #: {profile.preferred_diner_number}</p>
         </div>
 
         <div className={styles.headerRight}>

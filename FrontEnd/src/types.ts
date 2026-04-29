@@ -23,7 +23,7 @@ export type ReservationSearchFormValues = {
 export type ReservationOption = {
   id: string;
   tableIds: string[];
-  tableNumbers: number[];
+  tableNumbers: string[];
   totalCapacity: number;
   tablesNeedCombining: boolean;
   wastedSeats: number;

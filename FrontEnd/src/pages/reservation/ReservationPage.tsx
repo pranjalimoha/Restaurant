@@ -1,3 +1,4 @@
+import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Box,
   Button,
@@ -10,16 +11,15 @@ import {
   Typography,
 } from "@mui/material";
 import { useState } from "react";
+import { Controller, useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
+import { reservationSearchSchema } from "../../schema/reservationSchema";
+import { useReservationStore } from "../../store/reservationFlowStore";
 import {
   guestNumberOptions,
   type ReservationOption,
   type ReservationSearchFormValues,
 } from "../../types";
-import { Controller, useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useReservationStore } from "../../store/reservationFlowStore";
-import { reservationSearchSchema } from "../../schema/reservationSchema";
 import { searchAvailableTables } from "../reservation/reservationApi";
 
 export default function ReservationPage() {
@@ -47,7 +47,7 @@ export default function ReservationPage() {
 
   type BackendTable = {
     id: string;
-    table_number: string | number;
+    table_number: string;
     capacity: number;
   };
 
@@ -69,7 +69,7 @@ export default function ReservationPage() {
     const directTableOptions = data.availableTables.map((table) => ({
       id: `table-option-${table.id}`,
       tableIds: [table.id],
-      tableNumbers: [Number(table.table_number)],
+      tableNumbers: [table.table_number],
       totalCapacity: table.capacity,
       tablesNeedCombining: false,
       wastedSeats: table.capacity - numberOfGuests,
@@ -78,7 +78,7 @@ export default function ReservationPage() {
     const combinationOptions = data.suggestedCombinations.map((combo, index) => ({
       id: `combo-option-${index}`,
       tableIds: combo.tables.map((table) => table.id),
-      tableNumbers: combo.tables.map((table) => Number(table.table_number)),
+      tableNumbers: combo.tables.map((table) => table.table_number),
       totalCapacity: combo.totalCapacity,
       tablesNeedCombining: combo.needsCombination,
       wastedSeats: combo.totalCapacity - numberOfGuests,

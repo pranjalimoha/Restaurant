@@ -1,8 +1,5 @@
-import { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import { useAuthStore } from "../../../store/authStore";
-import axios from "axios";
-
+import ArrowBackRoundedIcon from "@mui/icons-material/ArrowBackRounded";
+import PersonAddAltRoundedIcon from "@mui/icons-material/PersonAddAltRounded";
 import {
   Box,
   Button,
@@ -16,9 +13,10 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-
-import ArrowBackRoundedIcon from "@mui/icons-material/ArrowBackRounded";
-import PersonAddAltRoundedIcon from "@mui/icons-material/PersonAddAltRounded";
+import axios from "axios";
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { useAuthStore } from "../../../store/authStore";
 import styles from "./RegisterPage.module.css";
 
 export default function RegisterPage() {
@@ -216,10 +214,7 @@ export default function RegisterPage() {
                     Already have an account?
                   </Typography>
 
-                  <Button
-                    onClick={() => navigate("/login")}
-                    className={styles.signInButton}
-                  >
+                  <Button onClick={() => navigate("/login")} className={styles.signInButton}>
                     Sign in
                   </Button>
                 </Box>

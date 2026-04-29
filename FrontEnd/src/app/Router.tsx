@@ -1,18 +1,18 @@
 import { createBrowserRouter } from "react-router-dom";
-import MainLayout from "../layouts/MainLayout";
+import AdminLayout from "../layouts/AdminLayout";
 import AuthLayout from "../layouts/AuthLayout";
 import DashboardLayout from "../layouts/DashboardLayout";
-import AdminLayout from "../layouts/AdminLayout";
-import ReservationPage from "../pages/reservation/ReservationPage";
-import ReservationDetailsPage from "../pages/reservation/details/ReservationDetailsPage";
-import ReservationPaymentPage from "../pages/reservation/payment/ReservationPaymentPage";
-import ReservationConfirmationPage from "../pages/reservation/confirmation/ReservationConfirmationPage";
+import MainLayout from "../layouts/MainLayout";
+import AdminDashboardPage from "../pages/admin/AdminDashboardPage";
 import LoginPage from "../pages/auth/login/LoginPage";
 import RegisterPage from "../pages/auth/register/RegisterPage";
 import DashboardPage from "../pages/dashboard/DashboardPage";
-import ProfilePage from "../pages/profile/ProfilePage";
-import AdminDashboardPage from "../pages/admin/AdminDashboardPage";
 import HomePage from "../pages/home/HomePage";
+import ProfilePage from "../pages/profile/ProfilePage";
+import ReservationConfirmationPage from "../pages/reservation/confirmation/ReservationConfirmationPage";
+import ReservationDetailsPage from "../pages/reservation/details/ReservationDetailsPage";
+import ReservationPaymentPage from "../pages/reservation/payment/ReservationPaymentPage";
+import ReservationPage from "../pages/reservation/ReservationPage";
 
 export const router = createBrowserRouter([
   {
