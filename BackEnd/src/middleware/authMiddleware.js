@@ -1,5 +1,5 @@
-import { verifyToken } from "../utils/jwt.js";
 import prisma from "../lib/prisma.js";
+import { verifyToken } from "../utils/jwt.js";
 
 export const authenticateToken = async (req, res, next) => {
   try {
@@ -25,7 +25,7 @@ export const authenticateToken = async (req, res, next) => {
 
     const user = await prisma.users.findUnique({
       where: {
-        id: decoded.id,
+        id: decoded.userId,
       },
       select: {
         id: true,

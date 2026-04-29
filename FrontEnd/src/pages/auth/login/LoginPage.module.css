@@ -1,0 +1,125 @@
+.page {
+  min-height: 100vh;
+  background: linear-gradient(180deg, #f7f2e7 0%, #f4f4f5 100%);
+  padding: 32px 0;
+}
+
+.container {
+  padding-top: 12px;
+  padding-bottom: 24px;
+}
+
+.backButton {
+  align-self: flex-start;
+  text-transform: none;
+  font-weight: 500;
+  color: #475569;
+}
+
+.card {
+  border-radius: 24px;
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
+}
+
+.cardContent {
+  padding: 32px;
+}
+
+.content {
+  align-items: center;
+}
+
+.iconCircle {
+  width: 96px;
+  height: 96px;
+  border-radius: 999px;
+  background-color: #dcfce7;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.icon {
+  font-size: 48px;
+  color: #16a34a;
+}
+
+.header {
+  text-align: center;
+}
+
+.title {
+  font-size: clamp(2.2rem, 6vw, 3.5rem);
+  font-weight: 700;
+  color: #0f172a;
+  line-height: 1.1;
+}
+
+.subtitle {
+  margin-top: 12px;
+  color: #475569;
+}
+
+.signInButton {
+  width: 100%;
+  min-height: 56px;
+  border-radius: 14px;
+  text-transform: none;
+  font-size: 1rem;
+  font-weight: 700;
+  background-color: #16a34a;
+}
+
+.signInButton:hover {
+  background-color: #15803d;
+}
+
+.demoBox {
+  text-align: center;
+}
+
+.demoTitle {
+  color: #475569;
+  font-weight: 500;
+}
+
+.demoText {
+  margin-top: 6px;
+  color: #64748b;
+}
+
+.footer {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.footerText {
+  color: #475569;
+}
+
+.registerButton {
+  text-transform: none;
+  font-weight: 700;
+}
+
+@media (max-width: 599px) {
+  .page {
+    padding: 20px 0;
+  }
+
+  .cardContent {
+    padding: 24px;
+  }
+
+  .iconCircle {
+    width: 84px;
+    height: 84px;
+  }
+
+  .icon {
+    font-size: 40px;
+  }
+}
