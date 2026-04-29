@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Box, Button, Card, CardContent, Container, Stack, Typography } from "@mui/material";
-import { getReservationById } from "../reservationApi";
+import { authorizeHoldingFee, getReservationById } from "../reservationApi";
 import type { ReservationDetails } from "../../../types";
 
 export default function ReservationPaymentPage() {
@@ -11,6 +11,8 @@ export default function ReservationPaymentPage() {
   const [reservation, setReservation] = useState<ReservationDetails | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState("");
+  const [isAuthorizing, setIsAuthorizing] = useState(false);
+  const [paymentError, setPaymentError] = useState("");
 
   useEffect(() => {
     async function loadReservation() {
@@ -35,6 +37,24 @@ export default function ReservationPaymentPage() {
 
     loadReservation();
   }, [id]);
+
+  const handleAuthorizeHoldingFee = async () => {
+    if (!reservation) return;
+
+    setPaymentError("");
+    setIsAuthorizing(true);
+
+    try {
+      await authorizeHoldingFee(reservation.id);
+      navigate(`/reservation/confirmation/${reservation.id}`);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Unable to authorize holding fee.";
+
+      setPaymentError(message);
+    } finally {
+      setIsAuthorizing(false);
+    }
+  };
 
   if (isLoading) {
     return (
@@ -88,10 +108,13 @@ export default function ReservationPaymentPage() {
               <Button
                 variant="contained"
                 size="large"
-                onClick={() => navigate(`/reservation/confirmation/${reservation.id}`)}
+                disabled={isAuthorizing}
+                onClick={handleAuthorizeHoldingFee}
               >
-                Finalize Reservation
+                {isAuthorizing ? "Authorizing..." : "Authorize Holding Fee"}
               </Button>
+
+              {paymentError ? <Typography color="error">{paymentError}</Typography> : null}
 
               <Button variant="outlined" onClick={() => navigate("/reservation")}>
                 Back to Reservation Search
