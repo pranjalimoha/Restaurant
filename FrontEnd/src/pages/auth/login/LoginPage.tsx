@@ -160,7 +160,10 @@ export default function LoginPage() {
                     Don&apos;t have an account?
                   </Typography>
 
-                  <Button onClick={() => navigate("/register")} className={styles.registerButton}>
+                  <Button
+                    onClick={() => navigate("/register")}
+                    className={styles.registerButton}
+                  >
                     Create one
                   </Button>
                 </Box>

@@ -19,7 +19,7 @@ function getAuthenticatedUserId<T>(
 export const getUserProfile = async (
   req: AppRequest,
   res: AppResponse,
-  next: AppNext,
+  next: AppNext
 ) => {
   try {
     // Cast req to include auth fields added by middleware
@@ -31,6 +31,10 @@ export const getUserProfile = async (
     // Get userId safely
     const userId =
       authReq.user?.id ?? authReq.user?.userId ?? authReq.userId ?? null;
+      authReq.user?.id ??
+      authReq.user?.userId ??
+      authReq.userId ??
+      null;
 
     if (!userId) {
       return res.status(401).json({

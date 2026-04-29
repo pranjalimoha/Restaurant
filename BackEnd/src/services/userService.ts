@@ -103,7 +103,7 @@ export const changePassword = async (
 
   const isPasswordValid = await bcrypt.compare(
     currentPassword,
-    user.password_hash,
+    user.password_hash
   );
 
   if (!isPasswordValid) {

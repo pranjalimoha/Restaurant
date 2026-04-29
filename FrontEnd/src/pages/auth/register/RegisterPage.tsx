@@ -1,6 +1,6 @@
+import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuthStore } from "../../../store/authStore";
-import { useEffect } from "react";
 import axios from "axios";
 
 import {
@@ -216,7 +216,10 @@ export default function RegisterPage() {
                     Already have an account?
                   </Typography>
 
-                  <Button onClick={() => navigate("/login")} className={styles.signInButton}>
+                  <Button
+                    onClick={() => navigate("/login")}
+                    className={styles.signInButton}
+                  >
                     Sign in
                   </Button>
                 </Box>
