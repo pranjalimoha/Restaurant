@@ -47,7 +47,7 @@ export default function ReservationPage() {
 
   type BackendTable = {
     id: string;
-    table_number: string | number;
+    table_number: string;
     capacity: number;
   };
 
@@ -69,7 +69,7 @@ export default function ReservationPage() {
     const directTableOptions = data.availableTables.map((table) => ({
       id: `table-option-${table.id}`,
       tableIds: [table.id],
-      tableNumbers: [Number(table.table_number)],
+      tableNumbers: [table.table_number],
       totalCapacity: table.capacity,
       tablesNeedCombining: false,
       wastedSeats: table.capacity - numberOfGuests,
@@ -78,7 +78,7 @@ export default function ReservationPage() {
     const combinationOptions = data.suggestedCombinations.map((combo, index) => ({
       id: `combo-option-${index}`,
       tableIds: combo.tables.map((table) => table.id),
-      tableNumbers: combo.tables.map((table) => Number(table.table_number)),
+      tableNumbers: combo.tables.map((table) => table.table_number),
       totalCapacity: combo.totalCapacity,
       tablesNeedCombining: combo.needsCombination,
       wastedSeats: combo.totalCapacity - numberOfGuests,
