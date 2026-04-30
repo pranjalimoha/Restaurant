@@ -104,6 +104,7 @@ export default function LoginPage() {
             Home
           </Button>
 
+
           <Card className={styles.card}>
             <CardContent className={styles.cardContent}>
               <Stack spacing={4} className={styles.content}>
@@ -111,14 +112,17 @@ export default function LoginPage() {
                   <LoginRoundedIcon className={styles.icon} />
                 </Box>
 
+
                 <Box className={styles.header}>
                   <Typography variant="h2" className={styles.title}>
                     Sign In
                   </Typography>
                   <Typography variant="h6" className={styles.subtitle}>
                     Welcome back to Reserve & Dine
+                    Welcome back to Reserve & Dine
                   </Typography>
                 </Box>
+
 
                 <Stack spacing={3} sx={{ width: "stretch" }}>
                   <TextField
@@ -153,7 +157,7 @@ export default function LoginPage() {
                   {loading ? "Signing In..." : "Sign In"}
                 </Button>
 
-                {/* Γ£à ERROR DISPLAY */}
+                {/* ERROR DISPLAY */}
                 {error && (
                   <Typography variant="body2" color="error">
                     {error}

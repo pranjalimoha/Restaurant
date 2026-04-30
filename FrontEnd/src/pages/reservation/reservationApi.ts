@@ -6,12 +6,7 @@ type CreateReservationPayload = {
   guestInfo: GuestDetails;
 };
 
-// const API_URL = import.meta.env.VITE_API_URL;
-const API_URL = "http://localhost:5001";
-const token = localStorage.getItem("token");
-
-console.log("API_URL =", API_URL);
-console.log("Reservation token =", token);
+const API_URL = import.meta.env.VITE_API_URL;
 
 export async function createReservation(payload: CreateReservationPayload) {
   const requestBody = {
@@ -46,6 +41,20 @@ export async function createReservation(payload: CreateReservationPayload) {
   return data;
 }
 
+export async function authorizeHoldingFee(id: string) {
+  const response = await fetch(`${API_URL}/api/reservations/${id}/authorize-holding-fee`, {
+    method: "POST",
+  });
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error(data.message || "Failed to authorize holding fee");
+  }
+
+  return data;
+}
+
 export async function searchAvailableTables(values: ReservationSearchFormValues) {
   const params = new URLSearchParams({
     date: values.date,
@@ -53,11 +62,18 @@ export async function searchAvailableTables(values: ReservationSearchFormValues)
     numberOfGuests: String(values.numberOfGuests),
   });
 
-  const response = await fetch(`${API_URL}/api/reservations/search?${params}`);
-  const data = await response.json();
+  const url = `${API_URL}/api/reservations/search?${params}`;
+
+  const response = await fetch(url);
+
+  const text = await response.text();
+
+  const data = JSON.parse(text);
+
   if (!response.ok) {
     throw new Error(data.message || "Failed to search available tables");
   }
+
   return data;
 }
 

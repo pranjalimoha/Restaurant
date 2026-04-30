@@ -48,11 +48,15 @@ export const updateUserProfile = async (
   } = updatedData;
 
   const data: UpdateUserData = {
-    ...(name !== undefined && { name }), //if (name !== undefined) data.name = name;
+    ...(name !== undefined && { name }),
     ...(phone !== undefined && { phone }),
     ...(mailing_address !== undefined && { mailing_address }),
-    ...(billing_same_as_mailing !== undefined && { billing_same_as_mailing }),
-    ...(preferred_payment_method !== undefined && { preferred_payment_method }),
+    ...(billing_same_as_mailing !== undefined && {
+      billing_same_as_mailing,
+    }),
+    ...(preferred_payment_method !== undefined && {
+      preferred_payment_method,
+    }),
   };
 
   if (billing_same_as_mailing === true && mailing_address !== undefined) {
@@ -92,6 +96,7 @@ export const changePassword = async (
   if (!isPasswordValid) {
     throw new Error("Current password is incorrect");
   }
+
   const hashedPassword = await bcrypt.hash(newPassword, 10);
 
   await prisma.users.update({
@@ -102,7 +107,7 @@ export const changePassword = async (
   return { message: "Password updated successfully" };
 };
 
-export const getUserReservationHistory = async (userId) => {
+export const getUserReservationHistory = async (userId: string) => {
   return await prisma.reservations.findMany({
     where: { user_id: userId },
     include: {
@@ -116,7 +121,7 @@ export const getUserReservationHistory = async (userId) => {
   });
 };
 
-export const getUserPayments = async (userId) => {
+export const getUserPayments = async (userId: string) => {
   return await prisma.transactions.findMany({
     where: { user_id: userId },
     include: {

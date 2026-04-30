@@ -8,14 +8,15 @@ import {
   Button,
   Card,
   CardContent,
+  Checkbox,
   Container,
+  FormControlLabel,
+  MenuItem,
   Stack,
   TextField,
   Typography,
-  FormControlLabel,
-  Checkbox,
-  MenuItem,
 } from "@mui/material";
+
 import ArrowBackRoundedIcon from "@mui/icons-material/ArrowBackRounded";
 import PersonAddAltRoundedIcon from "@mui/icons-material/PersonAddAltRounded";
 import styles from "./RegisterPage.module.css";
@@ -109,14 +110,20 @@ export default function RegisterPage() {
                 </Box>
 
                 <Stack spacing={3} className={styles.formStack}>
-                  <TextField fullWidth label="Full Name" placeholder="Enter your full name" />
-
                   <TextField
                     fullWidth
                     label="Full Name"
                     placeholder="Enter your full name"
                     value={registerForm.name}
                     onChange={(e) => setRegisterField("name", e.target.value)}
+                  />
+
+                  <TextField
+                    fullWidth
+                    label="Email Address"
+                    placeholder="Enter your email"
+                    value={registerForm.email}
+                    onChange={(e) => setRegisterField("email", e.target.value)}
                   />
 
                   <TextField
@@ -188,6 +195,12 @@ export default function RegisterPage() {
                   />
                 </Stack>
 
+                {error && (
+                  <Typography color="error" variant="body2">
+                    {error}
+                  </Typography>
+                )}
+
                 <Button
                   variant="contained"
                   size="large"
@@ -195,7 +208,7 @@ export default function RegisterPage() {
                   onClick={handleRegister}
                   disabled={loading}
                 >
-                  Create Account
+                  {loading ? "Creating Account..." : "Create Account"}
                 </Button>
 
                 <Box className={styles.footer}>

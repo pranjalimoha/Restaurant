@@ -29,6 +29,28 @@ export const searchAvailableTables = async (
   };
 };
 
+export const authorizeHoldingFee = async (reservationId: string) => {
+  const reservation = await prisma.reservations.findUnique({
+    where: { id: reservationId },
+  });
+  if (!reservation) {
+    throw new Error("Reservation not found");
+  }
+  if (!reservation.requires_holding_fee) {
+    throw new Error("This reservation does not require a holding fee");
+  }
+  if (reservation.status !== "PENDING") {
+    throw new Error(`Only PENDING reservations can be confirmed. Current status: ${reservation.status}`);
+  }
+  return prisma.reservations.update({
+    where: { id: reservationId },
+    data: {
+      holding_fee_paid: true,
+      status: "CONFIRMED",
+    },
+  });
+};
+
 async function checkIfHighTrafficDay(date: Date): Promise<boolean> {
   const d = new Date(date);
 

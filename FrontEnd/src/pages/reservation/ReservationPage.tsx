@@ -74,7 +74,7 @@ export default function ReservationPage() {
       id: `table-option-${table.id}`,
       tableIds: [table.id],
       tableNumbers: [
-        Number(table.table_number ?? table.tableNumber ?? 0)
+        String(table.table_number ?? table.tableNumber ?? ""),
       ],
       totalCapacity: table.capacity,
       tablesNeedCombining: false,
@@ -85,7 +85,7 @@ export default function ReservationPage() {
       id: `combo-option-${index}`,
       tableIds: combo.tables.map((table) => table.id),
       tableNumbers: combo.tables.map((table) =>
-        Number(table.table_number ?? table.tableNumber)
+        String(table.table_number ?? table.tableNumber ?? "")
       ),
       totalCapacity: combo.totalCapacity,
       tablesNeedCombining: combo.needsCombination,

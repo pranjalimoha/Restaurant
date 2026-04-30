@@ -26,6 +26,7 @@ router.get(
   reservationController.searchAvailableTables,
 );
 
+
 //Create Reservation
 router.post(
   "/",
@@ -64,6 +65,11 @@ router.get(
   reservationController.getUserReservations,
 );
 
+router.post(
+  "/:id/authorize-holding-fee",
+  reservationController.authorizeHoldingFee,
+);
+
 // Update / cancel
 router.put("/:id", authenticateToken, reservationController.updateReservation);
 router.put(
@@ -74,5 +80,7 @@ router.put(
 
 // LAST
 router.get("/:id", reservationController.getReservationById);
+
+console.log("authorizeHoldingFee:", reservationController.authorizeHoldingFee);
 
 export default router;

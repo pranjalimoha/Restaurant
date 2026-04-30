@@ -23,7 +23,7 @@ export type ReservationSearchFormValues = {
 export type ReservationOption = {
   id: string;
   tableIds: string[];
-  tableNumbers: number[];
+  tableNumbers: string[];
   totalCapacity: number;
   tablesNeedCombining: boolean;
   wastedSeats: number;
@@ -110,6 +110,7 @@ export type ReservationFlowState = {
   searchCriteria: ReservationSearchFormValues | null;
   availableTables: ReservationOption[];
   selectedTable: ReservationOption | null;
+  guestInfo: GuestReservationDetailsFormValues | null;
   reservationConfirmation: ReservationConfirmation | null;
   guestDetails: GuestDetails | null;
 };
