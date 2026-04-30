@@ -1,4 +1,5 @@
 import prisma from "../lib/prisma.js";
+import { $Enums } from "@prisma/client";
 import type {
   CreateReservationRequest,
   ReservationServiceUserId,
@@ -353,18 +354,15 @@ export const updateReservation = async (
 export const completeReservation = async (
   reservationId: string,
   amountSpent: number,
+  paymentMethod: $Enums.transactions_payment_method,
 ) => {
-  if (amountSpent == null || amountSpent < 0) {
+  if (amountSpent == null || amountSpent <= 0) {
     throw new Error("Valid amountSpent is required");
   }
 
   const reservation = await prisma.reservations.findUnique({
-    where: {
-      id: reservationId,
-    },
-    include: {
-      users: true,
-    },
+    where: { id: reservationId },
+    include: { users: true },
   });
 
   if (!reservation) {
@@ -384,25 +382,15 @@ export const completeReservation = async (
   const pointsEarned = Math.floor(amountSpent);
 
   const updatedReservation = await prisma.reservations.update({
-    where: {
-      id: reservationId,
-    },
-    data: {
-      status: "COMPLETED",
-    },
+    where: { id: reservationId },
+    data: { status: "COMPLETED" },
   });
 
   let updatedUser = null;
 
-  if (
-    reservation.users &&
-    reservation.users.isRegistered &&
-    reservation.user_id
-  ) {
+  if (reservation.user_id) {
     updatedUser = await prisma.users.update({
-      where: {
-        id: reservation.user_id,
-      },
+      where: { id: reservation.user_id },
       data: {
         earned_points: {
           increment: pointsEarned,
@@ -413,27 +401,27 @@ export const completeReservation = async (
         name: true,
         email: true,
         earned_points: true,
-        isRegistered: true,
       },
     });
   }
+
+  const finalPaymentMethod =
+    paymentMethod ?? reservation.users?.preferred_payment_method;
 
   const newTransaction = await prisma.transactions.create({
     data: {
       user_id: reservation.user_id ?? null,
       reservation_id: reservationId,
       amount_spent: amountSpent,
-      points_earned:
-        reservation.users && reservation.users.isRegistered ? pointsEarned : 0,
-      payment_method: "CASH",
+      points_earned: pointsEarned,
+      payment_method: finalPaymentMethod,
       transaction_date: new Date(),
     },
   });
 
   return {
     reservation: updatedReservation,
-    pointsEarned:
-      reservation.users && reservation.users.isRegistered ? pointsEarned : 0,
+    pointsEarned,
     user: updatedUser,
     transaction: newTransaction,
   };

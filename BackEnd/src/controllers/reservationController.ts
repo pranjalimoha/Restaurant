@@ -199,8 +199,9 @@ export const completeReservation = async (
 ) => {
   try {
     const { id } = req.params;
-    const { amountSpent } = req.body;
+    const { amountSpent, paymentMethod } = req.body;
 
+    // ✅ validate amount
     if (!amountSpent || amountSpent <= 0) {
       return res.status(400).json({
         success: false,
@@ -208,9 +209,20 @@ export const completeReservation = async (
       });
     }
 
+    // ✅ validate payment method
+    const validMethods = ["CASH", "CREDIT", "CHECK"];
+    if (!paymentMethod || !validMethods.includes(paymentMethod)) {
+      return res.status(400).json({
+        success: false,
+        message: "Valid payment method is required",
+      });
+    }
+
+    // ✅ call service with payment method
     const result = await reservationService.completeReservation(
       id,
       amountSpent,
+      paymentMethod,
     );
 
     return res.status(200).json({
