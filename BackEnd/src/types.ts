@@ -94,7 +94,9 @@ export type AppRequest<
   Body = EmptyBody,
   Params = EmptyParams,
   Query = EmptyQuery,
-> = Request<Params, unknown, Body, Query>;
+> = Request<Params, unknown, Body, Query> & {
+  user?: AuthUser;
+};
 
 export type AppResponse<T = unknown> = Response<T>;
 

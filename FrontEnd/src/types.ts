@@ -52,6 +52,7 @@ export type ReservationConfirmation = {
 
 export type ReservationDetails = {
   id: string;
+  user_id?: string | null;
   guest_name: string | null;
   guest_email: string | null;
   guest_phone: string | null;

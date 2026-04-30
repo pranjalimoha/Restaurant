@@ -15,7 +15,6 @@ function getAuthenticatedUserId<T>(
 ): string | null {
   return req.user?.id ?? req.user?.userId ?? req.userId ?? null;
 }
-
 export const getUserProfile = async (
   req: AppRequest,
   res: AppResponse,

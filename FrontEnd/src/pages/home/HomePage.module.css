@@ -144,7 +144,6 @@
   font-weight: 400 !important;
   line-height: 1.45 !important;
   text-align: center;
-
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
@@ -218,6 +217,37 @@
   background-color: #c2410c !important;
 }
 
+.infoSection {
+  margin-top: 40px;
+  border-radius: 20px;
+  overflow: hidden;
+  background-image: url("/food-bg.jpg");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  min-height: 300px;
+  display: flex;
+}
+
+.overlay {
+  background: rgba(0, 0, 0, 0.45);
+  padding: 60px 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  width: 100%;
+  min-height: 300px;
+}
+
+.infoText {
+  max-width: 700px;
+  color: #ffffff !important;
+  font-size: 1.3rem !important;
+  line-height: 1.7 !important;
+  font-weight: 600 !important;
+}
+
 @media (max-width: 599px) {
   .toolbar {
     min-height: 68px;
@@ -267,6 +297,19 @@
 
   .reserveIcon {
     font-size: 32px !important;
+  }
+
+  .infoSection {
+    min-height: 240px;
+  }
+
+  .overlay {
+    padding: 36px 24px;
+    min-height: 240px;
+  }
+
+  .infoText {
+    font-size: 1rem !important;
   }
 }
 

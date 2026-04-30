@@ -201,7 +201,7 @@ export const createTable = async (tableData: CreateTableRequest) => {
 
   return prisma.restaurant_tables.create({
     data: {
-      table_number: tableNumber,
+      table_number: String(tableNumber),
       capacity,
     },
   });

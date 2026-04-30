@@ -5,10 +5,11 @@ import type {
   AppResponse,
   EmptyBody,
   EmptyParams,
+  CreateTableRequest,
 } from "../types.js";
 
 type AvailableTablesQuery = {
-  date?: Date;
+  date?: string;
   time?: string;
   numberOfGuests?: string;
 };
@@ -40,7 +41,7 @@ export const getTableById = async (
 };
 
 export const createTable = async (
-  req: AppRequest,
+  req: AppRequest<CreateTableRequest>,
   res: AppResponse,
   next: AppNext,
 ) => {
@@ -75,7 +76,7 @@ export const getAllTables = async (
 };
 
 export const getAvailableTablesForReservation = async (
-  req: AppRequest<EmptyParams, EmptyBody, AvailableTablesQuery>,
+  req: AppRequest<EmptyBody, EmptyParams, AvailableTablesQuery>,
   res: AppResponse,
   next: AppNext,
 ) => {
@@ -89,10 +90,28 @@ export const getAvailableTablesForReservation = async (
       });
     }
 
+    const guests = Number.parseInt(numberOfGuests, 10);
+
+    if (isNaN(guests)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid number of guests",
+      });
+    }
+
+    const parsedDate = new Date(date);
+
+    if (isNaN(parsedDate.getTime())) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid date",
+      });
+    }
+
     const result = await tableService.getAvailableTablesForReservation(
-      date,
+      parsedDate,
       time,
-      Number.parseInt(numberOfGuests, 10),
+      guests,
     );
 
     return res.status(200).json({

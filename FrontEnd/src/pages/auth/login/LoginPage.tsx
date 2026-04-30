@@ -31,7 +31,7 @@ export default function LoginPage() {
   const handleLogin = async () => {
     setError(null);
 
-    // ✅ VALIDATION
+    // Γ£à VALIDATION
     if (!loginForm.email || !loginForm.password) {
       setError("Please fill in all fields");
       return;
@@ -70,16 +70,17 @@ export default function LoginPage() {
       const token = data.data.token;
       const user = data.data.user;
 
-      // ✅ Store globally
+      // Γ£à Store globally
       loginSuccess(token, user);
 
-      // ✅ Save in localStorage
+      // Γ£à Save in localStorage
       localStorage.setItem("token", token);
       localStorage.setItem("user", JSON.stringify(user));
 
       resetLoginForm();
       //navigate("/");
       navigate("/profile");
+
     } catch (err) {
       if (err instanceof Error) {
         setError(err.message);
@@ -103,6 +104,7 @@ export default function LoginPage() {
             Home
           </Button>
 
+
           <Card className={styles.card}>
             <CardContent className={styles.cardContent}>
               <Stack spacing={4} className={styles.content}>
@@ -110,14 +112,17 @@ export default function LoginPage() {
                   <LoginRoundedIcon className={styles.icon} />
                 </Box>
 
+
                 <Box className={styles.header}>
                   <Typography variant="h2" className={styles.title}>
                     Sign In
                   </Typography>
                   <Typography variant="h6" className={styles.subtitle}>
                     Welcome back to Reserve & Dine
+                    Welcome back to Reserve & Dine
                   </Typography>
                 </Box>
+
 
                 <Stack spacing={3} sx={{ width: "stretch" }}>
                   <TextField
@@ -125,7 +130,9 @@ export default function LoginPage() {
                     label="Email Address"
                     placeholder="Enter your email"
                     value={loginForm.email}
-                    onChange={(e) => setLoginField("email", e.target.value)}
+                    onChange={(e) =>
+                      setLoginField("email", e.target.value)
+                    }
                   />
 
                   <TextField
@@ -134,7 +141,9 @@ export default function LoginPage() {
                     type="password"
                     placeholder="Enter your password"
                     value={loginForm.password}
-                    onChange={(e) => setLoginField("password", e.target.value)}
+                    onChange={(e) =>
+                      setLoginField("password", e.target.value)
+                    }
                   />
                 </Stack>
 
@@ -148,7 +157,7 @@ export default function LoginPage() {
                   {loading ? "Signing In..." : "Sign In"}
                 </Button>
 
-                {/* ✅ ERROR DISPLAY */}
+                {/* ERROR DISPLAY */}
                 {error && (
                   <Typography variant="body2" color="error">
                     {error}
@@ -160,7 +169,10 @@ export default function LoginPage() {
                     Don&apos;t have an account?
                   </Typography>
 
-                  <Button onClick={() => navigate("/register")} className={styles.registerButton}>
+                  <Button
+                    onClick={() => navigate("/register")}
+                    className={styles.registerButton}
+                  >
                     Create one
                   </Button>
                 </Box>

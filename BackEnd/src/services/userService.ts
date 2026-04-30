@@ -1,7 +1,6 @@
 import bcrypt from "bcryptjs";
 import prisma from "../lib/prisma.js";
 import type { users_preferred_payment_method } from "@prisma/client";
-import type { users } from "@prisma/client";
 
 type UpdateUserData = {
   name?: string;
@@ -12,27 +11,27 @@ type UpdateUserData = {
   preferred_payment_method?: users_preferred_payment_method | null;
 };
 
-export const getUserProfile = async (userId: string): Promise<any> => {
-  const user = await prisma.users.findUnique({
-    where: { id: userId },
-    select: {
-      id: true,
-      email: true,
-      name: true,
-      phone: true,
-      mailing_address: true,
-      billing_address: true,
-      billing_same_as_mailing: true,
-      preferred_diner_number: true,
-      earned_points: true,
-      preferred_payment_method: true,
-      isRegistered: true,
-      created_at: true,
-      updated_at: true,
-    },
-  });
+const userProfileSelect = {
+  id: true,
+  email: true,
+  name: true,
+  phone: true,
+  mailing_address: true,
+  billing_address: true,
+  billing_same_as_mailing: true,
+  preferred_diner_number: true,
+  earned_points: true,
+  preferred_payment_method: true,
+  isRegistered: true,
+  created_at: true,
+  updated_at: true,
+};
 
-  return user;
+export const getUserProfile = async (userId: string) => {
+  return await prisma.users.findUnique({
+    where: { id: userId },
+    select: userProfileSelect,
+  });
 };
 
 export const updateUserProfile = async (
@@ -52,7 +51,9 @@ export const updateUserProfile = async (
     ...(name !== undefined && { name }),
     ...(phone !== undefined && { phone }),
     ...(mailing_address !== undefined && { mailing_address }),
-    ...(billing_same_as_mailing !== undefined && { billing_same_as_mailing }),
+    ...(billing_same_as_mailing !== undefined && {
+      billing_same_as_mailing,
+    }),
     ...(preferred_payment_method !== undefined && {
       preferred_payment_method,
     }),
@@ -67,25 +68,11 @@ export const updateUserProfile = async (
     data.billing_address = billing_address;
   }
 
-  const user = await prisma.users.update({
+  return await prisma.users.update({
     where: { id: userId },
     data,
-    select: {
-      id: true,
-      email: true,
-      name: true,
-      phone: true,
-      mailing_address: true,
-      billing_address: true,
-      billing_same_as_mailing: true,
-      preferred_diner_number: true,
-      earned_points: true,
-      preferred_payment_method: true,
-      isRegistered: true,
-    },
+    select: userProfileSelect,
   });
-
-  return user;
 };
 
 export const changePassword = async (

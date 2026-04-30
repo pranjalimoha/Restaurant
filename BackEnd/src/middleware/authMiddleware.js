@@ -23,10 +23,17 @@ export const authenticateToken = async (req, res, next) => {
       });
     }
 
+    const userId = decoded.id || decoded.userId;
+
+    if (!userId) {
+      return res.status(403).json({
+        success: false,
+        message: "Invalid token payload",
+      });
+    }
+
     const user = await prisma.users.findUnique({
-      where: {
-        id: decoded.userId,
-      },
+      where: { id: userId },
       select: {
         id: true,
         email: true,
@@ -65,22 +72,24 @@ export const optionalAuth = async (req, res, next) => {
       const decoded = verifyToken(token);
 
       if (decoded) {
-        const user = await prisma.users.findUnique({
-          where: {
-            id: decoded.userId,
-          },
-          select: {
-            id: true,
-            email: true,
-            name: true,
-            phone: true,
-            preferred_diner_number: true,
-            earned_points: true,
-            isRegistered: true,
-          },
-        });
+        const userId = decoded.id || decoded.userId;
 
-        req.user = user || null;
+        if (userId) {
+          const user = await prisma.users.findUnique({
+            where: { id: userId },
+            select: {
+              id: true,
+              email: true,
+              name: true,
+              phone: true,
+              preferred_diner_number: true,
+              earned_points: true,
+              isRegistered: true,
+            },
+          });
+
+          req.user = user || null;
+        }
       }
     }
 

@@ -68,7 +68,9 @@ export const createReservation = async (
   next: AppNext,
 ) => {
   try {
-    const userId = req.userId ?? null;
+    const userId = req.user?.id ?? null;
+
+    console.log("Reservation create userId:", userId);
 
     const result = await reservationService.createReservation(req.body, userId);
 

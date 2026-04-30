@@ -19,18 +19,25 @@ export async function createReservation(payload: CreateReservationPayload) {
     selectedTableIds: payload.selectedTable.tableIds,
     specialRequests: payload.guestInfo.specialRequest,
   };
-  console.log("Create reservation request body:", requestBody);
+
+  const token = localStorage.getItem("token");
+
+
   const response = await fetch(`${API_URL}/api/reservations`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
+      ...(token && { Authorization: `Bearer ${token}` }),
     },
     body: JSON.stringify(requestBody),
   });
+
   const data = await response.json();
+
   if (!response.ok) {
     throw new Error(data.message || "Failed to create reservation");
   }
+
   return data;
 }
 
@@ -55,11 +62,18 @@ export async function searchAvailableTables(values: ReservationSearchFormValues)
     numberOfGuests: String(values.numberOfGuests),
   });
 
-  const response = await fetch(`${API_URL}/api/reservations/search?${params}`);
-  const data = await response.json();
+  const url = `${API_URL}/api/reservations/search?${params}`;
+
+  const response = await fetch(url);
+
+  const text = await response.text();
+
+  const data = JSON.parse(text);
+
   if (!response.ok) {
     throw new Error(data.message || "Failed to search available tables");
   }
+
   return data;
 }
 

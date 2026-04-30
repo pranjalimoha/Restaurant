@@ -111,13 +111,24 @@ export const createReservation = async (
   const reservationDateTime = new Date(
     `${reservationDate}T${normalizedTime}:00`,
   );
+
   const now = new Date();
 
   if (Number.isNaN(reservationDateTime.getTime())) {
     throw new Error("Invalid reservation date or time");
   }
 
-  if (reservationDateTime < now) {
+  const [hour, minute] = normalizedTime.split(":").map(Number);
+  const selectedMinutes = hour * 60 + minute;
+
+  const openingMinutes = 10 * 60; // 10:00 AM
+  const closingMinutes = 22 * 60; // 10:00 PM
+
+  if (selectedMinutes < openingMinutes || selectedMinutes > closingMinutes) {
+    throw new Error("Reservations are only allowed between 10:00 AM and 10:00 PM");
+  }
+
+  if (reservationDateTime.getTime() < now.getTime()) {
     throw new Error("Cannot create a reservation for a past date or time");
   }
 
@@ -192,10 +203,6 @@ export const createReservation = async (
       },
       select: {
         id: true,
-        email: true,
-        name: true,
-        phone: true,
-        preferred_diner_number: true,
       },
     });
 
@@ -245,8 +252,8 @@ export const createReservation = async (
 
   const combinationNote = needsCombination
     ? `Tables ${selectedTables
-        .map((table) => table.table_number)
-        .join(" + ")} combined for ${numberOfGuests} guests`
+      .map((table) => table.table_number)
+      .join(" + ")} combined for ${numberOfGuests} guests`
     : null;
 
   return {
