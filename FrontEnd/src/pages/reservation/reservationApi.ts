@@ -22,7 +22,6 @@ export async function createReservation(payload: CreateReservationPayload) {
 
   const token = localStorage.getItem("token");
 
-
   const response = await fetch(`${API_URL}/api/reservations`, {
     method: "POST",
     headers: {

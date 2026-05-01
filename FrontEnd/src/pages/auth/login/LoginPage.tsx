@@ -80,7 +80,6 @@ export default function LoginPage() {
       resetLoginForm();
       //navigate("/");
       navigate("/profile");
-
     } catch (err) {
       if (err instanceof Error) {
         setError(err.message);
@@ -104,7 +103,6 @@ export default function LoginPage() {
             Home
           </Button>
 
-
           <Card className={styles.card}>
             <CardContent className={styles.cardContent}>
               <Stack spacing={4} className={styles.content}>
@@ -112,17 +110,14 @@ export default function LoginPage() {
                   <LoginRoundedIcon className={styles.icon} />
                 </Box>
 
-
                 <Box className={styles.header}>
                   <Typography variant="h2" className={styles.title}>
                     Sign In
                   </Typography>
                   <Typography variant="h6" className={styles.subtitle}>
-                    Welcome back to Reserve & Dine
-                    Welcome back to Reserve & Dine
+                    Welcome back to Reserve & Dine Welcome back to Reserve & Dine
                   </Typography>
                 </Box>
-
 
                 <Stack spacing={3} sx={{ width: "stretch" }}>
                   <TextField
@@ -130,9 +125,7 @@ export default function LoginPage() {
                     label="Email Address"
                     placeholder="Enter your email"
                     value={loginForm.email}
-                    onChange={(e) =>
-                      setLoginField("email", e.target.value)
-                    }
+                    onChange={(e) => setLoginField("email", e.target.value)}
                   />
 
                   <TextField
@@ -141,9 +134,7 @@ export default function LoginPage() {
                     type="password"
                     placeholder="Enter your password"
                     value={loginForm.password}
-                    onChange={(e) =>
-                      setLoginField("password", e.target.value)
-                    }
+                    onChange={(e) => setLoginField("password", e.target.value)}
                   />
                 </Stack>
 
@@ -169,10 +160,7 @@ export default function LoginPage() {
                     Don&apos;t have an account?
                   </Typography>
 
-                  <Button
-                    onClick={() => navigate("/register")}
-                    className={styles.registerButton}
-                  >
+                  <Button onClick={() => navigate("/register")} className={styles.registerButton}>
                     Create one
                   </Button>
                 </Box>

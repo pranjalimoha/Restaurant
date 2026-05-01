@@ -73,9 +73,7 @@ export default function ReservationPage() {
     const directTableOptions = data.availableTables.map((table) => ({
       id: `table-option-${table.id}`,
       tableIds: [table.id],
-      tableNumbers: [
-        String(table.table_number ?? table.tableNumber ?? ""),
-      ],
+      tableNumbers: [String(table.table_number ?? table.tableNumber ?? "")],
       totalCapacity: table.capacity,
       tablesNeedCombining: false,
       wastedSeats: table.capacity - numberOfGuests,
@@ -85,7 +83,7 @@ export default function ReservationPage() {
       id: `combo-option-${index}`,
       tableIds: combo.tables.map((table) => table.id),
       tableNumbers: combo.tables.map((table) =>
-        String(table.table_number ?? table.tableNumber ?? "")
+        String(table.table_number ?? table.tableNumber ?? ""),
       ),
       totalCapacity: combo.totalCapacity,
       tablesNeedCombining: combo.needsCombination,
