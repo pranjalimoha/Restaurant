@@ -132,7 +132,7 @@ export default function AdminDashboardPage() {
                           </Typography>
                         </Box>
 
-                        <Stack sx={{flexDirection: "row", flexWrap: "wrap"}} spacing={1}>
+                        <Stack sx={{flexDirection: "row", alignItems: "flex-end", gap: "10px", flexWrap: "wrap"}} spacing={1}>
                           <Chip label={reservation.status} />
 
                           {reservation.tables_need_combining ? (
