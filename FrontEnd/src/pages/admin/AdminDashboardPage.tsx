@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import {
   Alert,
   Box,
+  Button,
   Card,
   CardContent,
   Chip,
@@ -36,6 +37,7 @@ export default function AdminDashboardPage() {
   const [reservations, setReservations] = useState<AdminReservation[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState("");
+  const [filter, setFilter] = useState<"all" | "combined">("all");
 
   useEffect(() => {
     async function loadReservations() {
@@ -44,9 +46,7 @@ export default function AdminDashboardPage() {
         setReservations(response.data);
       } catch (error) {
         const message =
-          error instanceof Error
-            ? error.message
-            : "Unable to load admin reservations.";
+          error instanceof Error ? error.message : "Unable to load admin reservations.";
 
         setErrorMessage(message);
       } finally {
@@ -60,6 +60,7 @@ export default function AdminDashboardPage() {
   const combinationReservations = reservations.filter(
     (reservation) => reservation.tables_need_combining,
   );
+  const visibleReservations = filter === "combined" ? combinationReservations : reservations;
 
   if (isLoading) {
     return (
@@ -91,92 +92,117 @@ export default function AdminDashboardPage() {
                 <Typography variant="h5" sx={{ fontWeight: 700 }}>
                   Owner Setup Alerts
                 </Typography>
+                <Stack direction="row" spacing={2} sx={{ mt: 2, justifyContent: "center" }}>
+                  <Button
+                    variant={filter === "all" ? "contained" : "outlined"}
+                    onClick={() => setFilter("all")}
+                  >
+                    View All Reservations
+                  </Button>
+
+                  <Button
+                    variant={filter === "combined" ? "contained" : "outlined"}
+                    color="warning"
+                    onClick={() => setFilter("combined")}
+                  >
+                    View Combine Table Alerts
+                  </Button>
+                </Stack>
 
                 <Typography sx={{ color: "#475569" }}>
-                  {combinationReservations.length} reservation(s) require tables
-                  to be combined.
+                  {combinationReservations.length} reservation(s) require tables to be combined.
                 </Typography>
               </Stack>
             </CardContent>
           </Card>
 
           <Stack spacing={2}>
-            {reservations.map((reservation) => {
-              const tableNumbers = reservation.reservation_tables
-                .map((item) => item.restaurant_tables.table_number)
-                .join(" + ");
+            {visibleReservations.length === 0 ? (
+              <Card sx={{ borderRadius: 4 }}>
+                <CardContent>
+                  <Typography sx={{ color: "#64748b" }}>
+                    No reservations match this filter.
+                  </Typography>
+                </CardContent>
+              </Card>
+            ) : (
+              visibleReservations.map((reservation) => {
+                const tableNumbers = reservation.reservation_tables
+                  .map((item) => item.restaurant_tables.table_number)
+                  .join(" + ");
 
-              const formattedDate = dayjs(reservation.reservation_date).format(
-                "MMMM D, YYYY",
-              );
+                const formattedDate = dayjs(reservation.reservation_date).format("MMMM D, YYYY");
 
-              const formattedTime = dayjs(reservation.reservation_time).format(
-                "h:mm A",
-              );
+                const formattedTime = dayjs(reservation.reservation_time).format("h:mm A");
 
-              return (
-                <Card key={reservation.id} sx={{ borderRadius: 4 }}>
-                  <CardContent>
-                    <Stack spacing={2}>
-                      <Stack
-                        sx={{justifyContent: "space-between", flexDirection: {xs: "column", sm: "row"}}}
-                        spacing={2}
-                      >
-                        <Box>
-                          <Typography variant="h6" sx={{ fontWeight: 700 }}>
-                            {reservation.guest_name || "Guest Reservation"}
-                          </Typography>
+                return (
+                  <Card key={reservation.id} sx={{ borderRadius: 4 }}>
+                    <CardContent>
+                      <Stack spacing={2}>
+                        <Stack
+                          sx={{
+                            justifyContent: "space-between",
+                            flexDirection: { xs: "column", sm: "row" },
+                          }}
+                          spacing={2}
+                        >
+                          <Box>
+                            <Typography variant="h6" sx={{ fontWeight: 700 }}>
+                              {reservation.guest_name || "Guest Reservation"}
+                            </Typography>
 
-                          <Typography sx={{ color: "#64748b" }}>
-                            {formattedDate} at {formattedTime}
-                          </Typography>
-                        </Box>
+                            <Typography sx={{ color: "#64748b" }}>
+                              {formattedDate} at {formattedTime}
+                            </Typography>
+                          </Box>
 
-                        <Stack sx={{flexDirection: "row", alignItems: "flex-end", gap: "10px", flexWrap: "wrap"}} spacing={1}>
-                          <Chip label={reservation.status} />
+                          <Stack
+                            sx={{
+                              flexDirection: "row",
+                              alignItems: "flex-end",
+                              gap: "10px",
+                              flexWrap: "wrap",
+                            }}
+                            spacing={1}
+                          >
+                            <Chip label={reservation.status} />
 
-                          {reservation.tables_need_combining ? (
-                            <Chip
-                              label="Owner Action: Combine Tables"
-                              color="warning"
-                            />
-                          ) : (
-                            <Chip label="Single Table" color="success" />
-                          )}
+                            {reservation.tables_need_combining ? (
+                              <Chip label="Owner Action: Combine Tables" color="warning" />
+                            ) : (
+                              <Chip label="Single Table" color="success" />
+                            )}
 
-                          {reservation.requires_holding_fee ? (
-                            <Chip
-                              label={
-                                reservation.holding_fee_paid
-                                  ? "Holding Fee Paid"
-                                  : "Holding Fee Pending"
-                              }
-                              color={
-                                reservation.holding_fee_paid
-                                  ? "success"
-                                  : "warning"
-                              }
-                            />
-                          ) : null}
+                            {reservation.requires_holding_fee ? (
+                              <Chip
+                                label={
+                                  reservation.holding_fee_paid
+                                    ? "Holding Fee Paid"
+                                    : "Holding Fee Pending"
+                                }
+                                color={reservation.holding_fee_paid ? "success" : "warning"}
+                              />
+                            ) : null}
+                          </Stack>
                         </Stack>
+
+                        <Typography>Guests: {reservation.number_of_guests}</Typography>
+                        <Typography>Table(s): {tableNumbers}</Typography>
+                        <Typography>Email: {reservation.guest_email}</Typography>
+                        <Typography>Phone: {reservation.guest_phone}</Typography>
+
+                        {reservation.tables_need_combining ? (
+                          <Alert severity="warning">
+                            Owner notification: combine tables {tableNumbers} for this reservation
+                            before the guest arrives.
+                          </Alert>
+                        ) : null}
                       </Stack>
-
-                      <Typography>Guests: {reservation.number_of_guests}</Typography>
-                      <Typography>Table(s): {tableNumbers}</Typography>
-                      <Typography>Email: {reservation.guest_email}</Typography>
-                      <Typography>Phone: {reservation.guest_phone}</Typography>
-
-                      {reservation.tables_need_combining ? (
-                        <Alert severity="warning">
-                          Owner notification: combine tables {tableNumbers} for
-                          this reservation before the guest arrives.
-                        </Alert>
-                      ) : null}
-                    </Stack>
-                  </CardContent>
-                </Card>
-              );
-            })}
+                    </CardContent>
+                  </Card>
+                );
+              })
+            )}
           </Stack>
         </Stack>
       </Container>
