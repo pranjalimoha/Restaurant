@@ -80,47 +80,46 @@ export default function ReservationConfirmationPage() {
             </Typography>
           </Box>
           {!isRegisteredUser ? (
-              <Card sx={{ marginTop: 4, borderRadius: 4 }}>
-                <CardContent>
-                  <Stack spacing={2}>
-                    <Typography variant="h5" sx={{ fontWeight: 700 }}>
-                      Create an Account
-                    </Typography>
+            <Card sx={{ marginTop: 4, borderRadius: 4 }}>
+              <CardContent>
+                <Stack spacing={2}>
+                  <Typography variant="h5" sx={{ fontWeight: 700 }}>
+                    Create an Account
+                  </Typography>
 
-                    <Typography sx={{ color: "#475569" }}>
-                      Create an account to manage this reservation, view your reservation history,
-                      earn dining points, and save your preferences for faster bookings in the
-                      future.
-                    </Typography>
+                  <Typography sx={{ color: "#475569" }}>
+                    Create an account to manage this reservation, view your reservation history,
+                    earn dining points, and save your preferences for faster bookings in the future.
+                  </Typography>
 
-                    <Stack
-                      direction={{ xs: "column", sm: "row" }}
-                      spacing={2}
-                      sx={{ justifyContent: "center" }}
+                  <Stack
+                    direction={{ xs: "column", sm: "row" }}
+                    spacing={2}
+                    sx={{ justifyContent: "center" }}
+                  >
+                    <Button
+                      variant="contained"
+                      onClick={() =>
+                        navigate("/register", {
+                          state: {
+                            name: reservation.guest_name,
+                            email: reservation.guest_email,
+                            phone: reservation.guest_phone,
+                          },
+                        })
+                      }
                     >
-                      <Button
-                        variant="contained"
-                        onClick={() =>
-                          navigate("/register", {
-                            state: {
-                              name: reservation.guest_name,
-                              email: reservation.guest_email,
-                              phone: reservation.guest_phone,
-                            },
-                          })
-                        }
-                      >
-                        Create Account
-                      </Button>
+                      Create Account
+                    </Button>
 
-                      <Button variant="outlined" onClick={() => navigate("/reservation")}>
-                        Continue as Guest
-                      </Button>
-                    </Stack>
+                    <Button variant="outlined" onClick={() => navigate("/reservation")}>
+                      Continue as Guest
+                    </Button>
                   </Stack>
-                </CardContent>
-              </Card>
-            ) : null}
+                </Stack>
+              </CardContent>
+            </Card>
+          ) : null}
           <Card sx={{ borderRadius: 4 }}>
             <CardContent>
               <Stack spacing={2}>

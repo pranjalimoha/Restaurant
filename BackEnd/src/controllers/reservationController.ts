@@ -41,6 +41,24 @@ export const searchAvailableTables = async (
   }
 };
 
+export const getAllReservations = async (
+  req: AppRequest,
+  res: AppResponse,
+  next: AppNext,
+) => {
+  try {
+    const reservations = await reservationService.getAllReservations();
+
+    res.status(200).json({
+      success: true,
+      data: reservations,
+    });
+    return;
+  } catch (error) {
+    next(error);
+  }
+};
+
 export const authorizeHoldingFee = async (
   req: AppRequest<EmptyBody, ReservationIdParams>,
   res: AppResponse,

@@ -82,7 +82,10 @@ router.put(
 // No-show
 router.post("/no-show/:id", reservationController.markNoShow);
 
+router.get("/admin/all", reservationController.getAllReservations);
+
 // LAST
 router.get("/:id", reservationController.getReservationById);
+
 
 export default router;

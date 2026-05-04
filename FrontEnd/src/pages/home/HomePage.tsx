@@ -30,6 +30,24 @@ export default function HomePage() {
           </Box>
           <Button
             variant="contained"
+            size="small"
+            onClick={() => navigate("/admin")}
+            sx={{
+              minWidth: "auto",
+              px: 2,
+              borderRadius: 3,
+              textTransform: "none",
+              fontWeight: 700,
+              backgroundColor: "#7c3aed", // purple admin color
+              "&:hover": {
+                backgroundColor: "#6d28d9",
+              },
+            }}
+          >
+            Admin
+          </Button>
+          <Button
+            variant="contained"
             onClick={() => navigate("/login")}
             className={styles.loginButton}
           >

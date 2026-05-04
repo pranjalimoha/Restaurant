@@ -31,6 +31,30 @@ export const searchAvailableTables = async (
   };
 };
 
+export const getAllReservations = async () => {
+  return prisma.reservations.findMany({
+    include: {
+      reservation_tables: {
+        include: {
+          restaurant_tables: true,
+        },
+      },
+      users: {
+        select: {
+          id: true,
+          name: true,
+          email: true,
+          phone: true,
+        },
+      },
+    },
+    orderBy: [
+      { reservation_date: "asc" },
+      { reservation_time: "asc" },
+    ],
+  });
+};
+
 export const authorizeHoldingFee = async (reservationId: string) => {
   const reservation = await prisma.reservations.findUnique({
     where: { id: reservationId },
