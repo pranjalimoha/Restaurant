@@ -1,4 +1,3 @@
-import { useEffect, useState } from "react";
 import {
   Alert,
   Box,
@@ -7,11 +6,23 @@ import {
   CardContent,
   Chip,
   Container,
+  FormControl,
+  FormControlLabel,
+  FormLabel,
+  Radio,
+  RadioGroup,
   Stack,
+  TextField,
   Typography,
 } from "@mui/material";
 import dayjs from "dayjs";
-import { getAllReservationsForAdmin } from "./adminApi";
+import { useEffect, useState } from "react";
+import {
+  completeReservationForAdmin,
+  getAllReservationsForAdmin,
+  markReservationNoShowForAdmin,
+  type PaymentMethod,
+} from "./adminApi";
 
 type AdminReservation = {
   id: string;
@@ -36,30 +47,99 @@ type AdminReservation = {
 export default function AdminDashboardPage() {
   const [reservations, setReservations] = useState<AdminReservation[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [updatingReservationId, setUpdatingReservationId] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
   const [filter, setFilter] = useState<"all" | "combined">("all");
 
-  useEffect(() => {
-    async function loadReservations() {
-      try {
-        const response = await getAllReservationsForAdmin();
-        setReservations(response.data);
-      } catch (error) {
-        const message =
-          error instanceof Error ? error.message : "Unable to load admin reservations.";
+  const [activeCompleteId, setActiveCompleteId] = useState<string | null>(null);
+  const [amountSpent, setAmountSpent] = useState("");
+  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("CASH");
 
-        setErrorMessage(message);
-      } finally {
-        setIsLoading(false);
-      }
+  async function loadReservations() {
+    try {
+      setErrorMessage("");
+
+      const response = await getAllReservationsForAdmin();
+      setReservations(response.data);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Unable to load admin reservations.";
+
+      setErrorMessage(message);
+    } finally {
+      setIsLoading(false);
     }
+  }
 
+  useEffect(() => {
     loadReservations();
   }, []);
+
+  function openCompleteForm(reservationId: string) {
+    setActiveCompleteId(reservationId);
+    setAmountSpent("");
+    setPaymentMethod("CASH");
+    setErrorMessage("");
+    setSuccessMessage("");
+  }
+
+  function closeCompleteForm() {
+    setActiveCompleteId(null);
+    setAmountSpent("");
+    setPaymentMethod("CASH");
+  }
+
+  async function handleCompleteReservation(reservationId: string) {
+    const numericAmountSpent = Number(amountSpent);
+
+    if (amountSpent.trim() === "" || Number.isNaN(numericAmountSpent) || numericAmountSpent < 0) {
+      setErrorMessage("Please enter a valid amount spent.");
+      return;
+    }
+
+    try {
+      setUpdatingReservationId(reservationId);
+      setErrorMessage("");
+      setSuccessMessage("");
+
+      await completeReservationForAdmin(reservationId, numericAmountSpent, paymentMethod);
+
+      setSuccessMessage("Reservation marked as completed.");
+      closeCompleteForm();
+      await loadReservations();
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Unable to complete reservation.";
+
+      setErrorMessage(message);
+    } finally {
+      setUpdatingReservationId("");
+    }
+  }
+
+  async function handleMarkNoShow(reservationId: string) {
+    try {
+      setUpdatingReservationId(reservationId);
+      setErrorMessage("");
+      setSuccessMessage("");
+
+      await markReservationNoShowForAdmin(reservationId);
+
+      setSuccessMessage("Reservation marked as no-show.");
+      await loadReservations();
+    } catch (error) {
+      const message =
+        error instanceof Error ? error.message : "Unable to mark reservation as no-show.";
+
+      setErrorMessage(message);
+    } finally {
+      setUpdatingReservationId("");
+    }
+  }
 
   const combinationReservations = reservations.filter(
     (reservation) => reservation.tables_need_combining,
   );
+
   const visibleReservations = filter === "combined" ? combinationReservations : reservations;
 
   if (isLoading) {
@@ -86,12 +166,15 @@ export default function AdminDashboardPage() {
 
           {errorMessage ? <Alert severity="error">{errorMessage}</Alert> : null}
 
+          {successMessage ? <Alert severity="success">{successMessage}</Alert> : null}
+
           <Card sx={{ borderRadius: 4 }}>
             <CardContent>
               <Stack spacing={1}>
                 <Typography variant="h5" sx={{ fontWeight: 700 }}>
                   Owner Setup Alerts
                 </Typography>
+
                 <Stack direction="row" spacing={2} sx={{ mt: 2, justifyContent: "center" }}>
                   <Button
                     variant={filter === "all" ? "contained" : "outlined"}
@@ -131,9 +214,28 @@ export default function AdminDashboardPage() {
                   .map((item) => item.restaurant_tables.table_number)
                   .join(" + ");
 
-                const formattedDate = dayjs(reservation.reservation_date).format("MMMM D, YYYY");
+                const formattedDate = new Date(reservation.reservation_date).toLocaleDateString(
+                  "en-US",
+                  {
+                    year: "numeric",
+                    month: "long",
+                    day: "numeric",
+                    timeZone: "UTC",
+                  },
+                );
 
-                const formattedTime = dayjs(reservation.reservation_time).format("h:mm A");
+                const formattedTime = new Date(reservation.reservation_time).toLocaleTimeString(
+                  "en-US",
+                  {
+                    hour: "numeric",
+                    minute: "2-digit",
+                    timeZone: "UTC",
+                  },
+                );
+
+                const isConfirmedReservation = reservation.status === "CONFIRMED";
+
+                const isUpdatingThisReservation = updatingReservationId === reservation.id;
 
                 return (
                   <Card key={reservation.id} sx={{ borderRadius: 4 }}>
@@ -187,15 +289,115 @@ export default function AdminDashboardPage() {
                         </Stack>
 
                         <Typography>Guests: {reservation.number_of_guests}</Typography>
-                        <Typography>Table(s): {tableNumbers}</Typography>
-                        <Typography>Email: {reservation.guest_email}</Typography>
-                        <Typography>Phone: {reservation.guest_phone}</Typography>
+
+                        <Typography>Table(s): {tableNumbers || "Not assigned"}</Typography>
+
+                        <Typography>Email: {reservation.guest_email || "N/A"}</Typography>
+
+                        <Typography>Phone: {reservation.guest_phone || "N/A"}</Typography>
 
                         {reservation.tables_need_combining ? (
                           <Alert severity="warning">
                             Owner notification: combine tables {tableNumbers} for this reservation
                             before the guest arrives.
                           </Alert>
+                        ) : null}
+
+                        {isConfirmedReservation ? (
+                          <Stack direction="row" spacing={2}>
+                            <Button
+                              variant="contained"
+                              color="success"
+                              disabled={isUpdatingThisReservation}
+                              onClick={() => openCompleteForm(reservation.id)}
+                            >
+                              Mark Completed
+                            </Button>
+
+                            <Button
+                              variant="outlined"
+                              color="error"
+                              disabled={isUpdatingThisReservation}
+                              onClick={() => handleMarkNoShow(reservation.id)}
+                            >
+                              Mark No Show
+                            </Button>
+                          </Stack>
+                        ) : (
+                          <Typography sx={{ color: "#64748b" }}>
+                            Actions available only for CONFIRMED reservations.
+                          </Typography>
+                        )}
+
+                        {activeCompleteId === reservation.id ? (
+                          <Box
+                            sx={{
+                              mt: 2,
+                              p: 2,
+                              border: "1px solid #e2e8f0",
+                              borderRadius: 3,
+                              background: "#ffffff",
+                            }}
+                          >
+                            <Stack spacing={2}>
+                              <Typography variant="h6" sx={{ fontWeight: 700 }}>
+                                Complete Reservation
+                              </Typography>
+
+                              <TextField
+                                label="Amount Spent"
+                                type="number"
+                                value={amountSpent}
+                                onChange={(event) => setAmountSpent(event.target.value)}
+                                fullWidth
+                              />
+
+                              <FormControl>
+                                <FormLabel>Payment Method</FormLabel>
+
+                                <RadioGroup
+                                  row
+                                  value={paymentMethod}
+                                  onChange={(event) =>
+                                    setPaymentMethod(event.target.value as PaymentMethod)
+                                  }
+                                >
+                                  <FormControlLabel value="CASH" control={<Radio />} label="Cash" />
+
+                                  <FormControlLabel
+                                    value="CREDIT"
+                                    control={<Radio />}
+                                    label="Credit"
+                                  />
+
+                                  <FormControlLabel
+                                    value="CHECK"
+                                    control={<Radio />}
+                                    label="Check"
+                                  />
+                                </RadioGroup>
+                              </FormControl>
+
+                              <Stack direction="row" spacing={2}>
+                                <Button
+                                  variant="contained"
+                                  color="success"
+                                  disabled={isUpdatingThisReservation}
+                                  onClick={() => handleCompleteReservation(reservation.id)}
+                                >
+                                  Submit Completion
+                                </Button>
+
+                                <Button
+                                  variant="outlined"
+                                  disabled={isUpdatingThisReservation}
+                                  onClick={closeCompleteForm}
+                                >
+                                  Cancel
+                                </Button>
+                              </Stack>
+                            </Stack>
+                          </Box>
                         ) : null}
                       </Stack>
                     </CardContent>

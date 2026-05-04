@@ -9,7 +9,6 @@ const HOST = "0.0.0.0";
 async function startServer() {
   try {
     await prisma.$connect();
-    console.log("DB CONNECTED");
 
     const server = http.createServer(app);
 
@@ -23,7 +22,6 @@ async function startServer() {
     });
 
     process.on("SIGINT", async () => {
-      console.log("Shutting down server...");
       server.close(async () => {
         await prisma.$disconnect();
         process.exit(0);

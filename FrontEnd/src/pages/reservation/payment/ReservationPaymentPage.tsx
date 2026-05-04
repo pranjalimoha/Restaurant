@@ -1,8 +1,8 @@
+import { Box, Button, Card, CardContent, Container, Stack, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { Box, Button, Card, CardContent, Container, Stack, Typography } from "@mui/material";
-import { authorizeHoldingFee, getReservationById } from "../reservationApi";
 import type { ReservationDetails } from "../../../types";
+import { authorizeHoldingFee, getReservationById } from "../reservationApi";
 
 export default function ReservationPaymentPage() {
   const { id } = useParams();

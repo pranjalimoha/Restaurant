@@ -144,10 +144,20 @@ export default function ProfilePage() {
 
                   <div className={styles.resGrid}>
                     <p>
-                      <b>Date:</b> {r.reservation_date}
+                      <b>Date:</b>{" "}
+                      {new Date(r.reservation_date).toLocaleDateString(undefined, {
+                        year: "numeric",
+                        month: "long",
+                        day: "numeric",
+                      })}
                     </p>
+
                     <p>
-                      <b>Time:</b> {r.reservation_time}
+                      <b>Time:</b>{" "}
+                      {new Date(r.reservation_time).toLocaleTimeString(undefined, {
+                        hour: "numeric",
+                        minute: "2-digit",
+                      })}
                     </p>
                     <p>
                       <b>Guests:</b> {r.number_of_guests}

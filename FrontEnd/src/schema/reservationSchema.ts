@@ -16,8 +16,11 @@ export const reservationSearchSchema = z.object({
 export type ReservationSearchSchemaValues = z.infer<typeof reservationSearchSchema>;
 
 export const guestDetailsSchema = z.object({
-  firstName: z.string().min(1, "First name is required"),
-  lastName: z.string().min(1, "Last name is required"),
-  email: z.string().email("Invalid email"),
-  phone: z.string().min(10, "Phone number is required"),
+  firstName: z.string().trim().min(1, "First name is required"),
+  lastName: z.string().trim().min(1, "Last name is required"),
+  email: z.string().trim().email("Invalid email"),
+  phone: z
+    .string()
+    .trim()
+    .regex(/^\d{10}$/, "Phone number must be exactly 10 digits"),
 });

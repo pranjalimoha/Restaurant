@@ -498,7 +498,7 @@ export const markNoShow = async (reservationId: string) => {
     throw new Error("Only CONFIRMED reservations can be marked as no-show");
   }
 
-  const chargeAmount = 25;
+  const chargeAmount = 10.0;
 
   const updatedReservation = await prisma.reservations.update({
     where: { id: reservationId },

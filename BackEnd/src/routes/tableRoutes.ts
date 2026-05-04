@@ -8,8 +8,6 @@ const router = express.Router();
 
 router.get("/", tableController.getAllTables);
 
-console.log(tableController);
-
 router.get(
   "/search",
   [

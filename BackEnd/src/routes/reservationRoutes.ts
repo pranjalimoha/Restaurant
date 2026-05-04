@@ -9,7 +9,7 @@ import {
 import { validate } from "../middleware/validateMiddleware.js";
 
 const router = express.Router();
-console.log("reservationRoutes file is loaded");
+
 router.get("/test", (req, res) => {
   res.json({ message: "Reservation route working" });
 });
@@ -27,8 +27,7 @@ router.get(
   reservationController.searchAvailableTables,
 );
 
-
-//Create Reservation
+// Create Reservation
 router.post(
   "/",
   optionalAuth,
@@ -59,6 +58,12 @@ router.post("/complete/:id", reservationController.completeReservation);
 // Confirm reservation
 router.post("/confirm/:id", reservationController.confirmReservation);
 
+// No-show
+router.post("/no-show/:id", reservationController.markNoShow);
+
+// Admin
+router.get("/admin/all", reservationController.getAllReservations);
+
 // Get user's reservations
 router.get(
   "/my-reservations",
@@ -66,6 +71,7 @@ router.get(
   reservationController.getUserReservations,
 );
 
+// Holding fee
 router.post(
   "/:id/authorize-holding-fee",
   reservationController.authorizeHoldingFee,
@@ -73,19 +79,14 @@ router.post(
 
 // Update / cancel
 router.put("/:id", authenticateToken, reservationController.updateReservation);
+
 router.put(
   "/:id/cancel",
   authenticateToken,
   reservationController.cancelReservation,
 );
 
-// No-show
-router.post("/no-show/:id", reservationController.markNoShow);
-
-router.get("/admin/all", reservationController.getAllReservations);
-
-// LAST
+// LAST: generic ID route
 router.get("/:id", reservationController.getReservationById);
-
 
 export default router;

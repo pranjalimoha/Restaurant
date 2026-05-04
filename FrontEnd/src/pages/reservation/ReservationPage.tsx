@@ -1,3 +1,4 @@
+import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Box,
   Button,
@@ -10,16 +11,15 @@ import {
   Typography,
 } from "@mui/material";
 import { useState } from "react";
+import { Controller, useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
+import { reservationSearchSchema } from "../../schema/reservationSchema";
+import { useReservationStore } from "../../store/reservationFlowStore";
 import {
   guestNumberOptions,
   type ReservationOption,
   type ReservationSearchFormValues,
 } from "../../types";
-import { Controller, useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useReservationStore } from "../../store/reservationFlowStore";
-import { reservationSearchSchema } from "../../schema/reservationSchema";
 import { searchAvailableTables } from "../reservation/reservationApi";
 
 export default function ReservationPage() {

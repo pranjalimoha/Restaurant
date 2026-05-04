@@ -1,3 +1,4 @@
+import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Box,
   Button,
@@ -8,14 +9,13 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { useNavigate } from "react-router-dom";
-import { useForm, Controller } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useReservationStore } from "../../../store/reservationFlowStore";
-import { GuestDetails } from "../../../types";
-import { guestDetailsSchema } from "../../../schema/reservationSchema";
-import { createReservation } from "../reservationApi";
 import { useState } from "react";
+import { Controller, useForm } from "react-hook-form";
+import { useNavigate } from "react-router-dom";
+import { guestDetailsSchema } from "../../../schema/reservationSchema";
+import { useReservationStore } from "../../../store/reservationFlowStore";
+import type { GuestDetails } from "../../../types";
+import { createReservation } from "../reservationApi";
 
 export default function ReservationDetailsPage() {
   const navigate = useNavigate();

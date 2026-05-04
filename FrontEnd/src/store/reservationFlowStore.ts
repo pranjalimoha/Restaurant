@@ -1,11 +1,11 @@
 import { create } from "zustand";
 import type {
+  GuestDetails,
   GuestReservationDetailsFormValues,
   ReservationConfirmation,
   ReservationFlowState,
   ReservationOption,
   ReservationSearchFormValues,
-  GuestDetails,
 } from "../types";
 
 type ReservationActions = {
