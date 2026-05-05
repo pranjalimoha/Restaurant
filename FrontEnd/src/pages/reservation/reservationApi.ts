@@ -8,7 +8,10 @@ type CreateReservationPayload = {
 
 const API_URL = import.meta.env.VITE_API_URL;
 
-export async function createReservation(payload: CreateReservationPayload) {
+export async function createReservation(
+  payload: CreateReservationPayload,
+  useLoggedInUser = false,
+) {
   const requestBody = {
     guestName: `${payload.guestInfo.firstName} ${payload.guestInfo.lastName}`,
     guestEmail: payload.guestInfo.email,
@@ -20,18 +23,19 @@ export async function createReservation(payload: CreateReservationPayload) {
     specialRequests: payload.guestInfo.specialRequest,
   };
 
-  console.log("FULL SELECTED TABLE:", payload.selectedTable);
-  console.log("TABLE IDS SENT:", payload.selectedTable.tableIds);
-  console.log("TABLE IDS LENGTH:", payload.selectedTable.tableIds.length);
-
   const token = localStorage.getItem("token");
+
+  const headers: Record<string, string> = {
+    "Content-Type": "application/json",
+  };
+
+  if (useLoggedInUser && token) {
+    headers.Authorization = `Bearer ${token}`;
+  }
 
   const response = await fetch(`${API_URL}/api/reservations`, {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      ...(token && { Authorization: `Bearer ${token}` }),
-    },
+    headers,
     body: JSON.stringify(requestBody),
   });
 

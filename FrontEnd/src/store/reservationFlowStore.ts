@@ -4,11 +4,13 @@ import type {
   GuestReservationDetailsFormValues,
   ReservationConfirmation,
   ReservationFlowState,
+  ReservationMode,
   ReservationOption,
   ReservationSearchFormValues,
 } from "../types";
 
 type ReservationActions = {
+  setReservationMode: (mode: ReservationMode) => void;
   setSearchCriteria: (values: ReservationSearchFormValues) => void;
   setGuestDetails: (details: GuestDetails) => void;
   setAvailableTables: (options: ReservationOption[]) => void;
@@ -23,6 +25,7 @@ type ReservationActions = {
 type ReservationStore = ReservationFlowState & ReservationActions;
 
 const initialState: ReservationFlowState = {
+  reservationMode: null,
   searchCriteria: null,
   availableTables: [],
   selectedTable: null,
@@ -33,6 +36,12 @@ const initialState: ReservationFlowState = {
 
 export const useReservationStore = create<ReservationStore>()((set) => ({
   ...initialState,
+
+  setReservationMode: (mode) =>
+    set(() => ({
+      reservationMode: mode,
+    })),
+
   setGuestDetails: (details) =>
     set(() => ({
       guestDetails: details,

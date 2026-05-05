@@ -53,6 +53,8 @@ export type ReservationConfirmation = {
 export type ReservationDetails = {
   id: string;
   user_id?: string | null;
+  isRegisteredReservation?: boolean;
+
   guest_name: string | null;
   guest_email: string | null;
   guest_phone: string | null;
@@ -64,7 +66,7 @@ export type ReservationDetails = {
   holding_fee_amount: string;
 
   users?: {
-    isRegistered: boolean | number | null;
+    isRegistered: boolean | null;
   } | null;
 
   reservation_tables: {
@@ -111,7 +113,10 @@ export type ApiResponse<T> = ApiSuccessResponse<T> | ApiErrorResponse;
 // ZUSTAND FLOW STATE
 // =====================
 
+export type ReservationMode = "guest" | "registered" | null;
+
 export type ReservationFlowState = {
+  reservationMode: ReservationMode;
   searchCriteria: ReservationSearchFormValues | null;
   availableTables: ReservationOption[];
   selectedTable: ReservationOption | null;

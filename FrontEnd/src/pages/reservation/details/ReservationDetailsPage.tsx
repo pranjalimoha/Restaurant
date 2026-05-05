@@ -23,6 +23,8 @@ export default function ReservationDetailsPage() {
   const selectedTable = useReservationStore((s) => s.selectedTable);
   const setGuestDetails = useReservationStore((s) => s.setGuestDetails);
   const searchCriteria = useReservationStore((state) => state.searchCriteria);
+  const reservationMode = useReservationStore((s) => s.reservationMode);
+
   const [submitError, setSubmitError] = useState("");
 
   const {
@@ -49,13 +51,18 @@ export default function ReservationDetailsPage() {
     setGuestDetails(values);
 
     try {
-      const response = await createReservation({
-        searchCriteria,
-        selectedTable,
-        guestInfo: values,
-      });
+      const finalMode = reservationMode || sessionStorage.getItem("reservationMode");
 
+      const response = await createReservation(
+        {
+          searchCriteria,
+          selectedTable,
+          guestInfo: values,
+        },
+        finalMode === "registered",
+      );
       const reservation = response.data;
+      sessionStorage.removeItem("reservationMode");
 
       if (reservation.requiresHoldingFee) {
         navigate(`/reservation/payment/${reservation.reservation.id}`);
@@ -148,9 +155,11 @@ export default function ReservationDetailsPage() {
                     />
                   )}
                 />
+
                 <Button type="submit" variant="contained" size="large" disabled={isSubmitting}>
                   {isSubmitting ? "Creating Reservation..." : "Continue"}
                 </Button>
+
                 {submitError ? <Typography color="error">{submitError}</Typography> : null}
               </Stack>
             </CardContent>

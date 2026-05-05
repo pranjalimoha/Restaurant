@@ -1,6 +1,5 @@
 import Groups2OutlinedIcon from "@mui/icons-material/Groups2Outlined";
 import HowToRegOutlinedIcon from "@mui/icons-material/HowToRegOutlined";
-import RestaurantOutlinedIcon from "@mui/icons-material/RestaurantOutlined";
 import {
   AppBar,
   Box,
@@ -14,10 +13,24 @@ import {
   Typography,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
+import { useReservationStore } from "../../store/reservationFlowStore";
 import styles from "./HomePage.module.css";
 
 export default function HomePage() {
   const navigate = useNavigate();
+  const setReservationMode = useReservationStore((s) => s.setReservationMode);
+
+  const continueAsGuest = () => {
+    setReservationMode("guest");
+    sessionStorage.setItem("reservationMode", "guest");
+    navigate("/reservation");
+  };
+
+  const continueAsRegistered = () => {
+    setReservationMode("registered");
+    sessionStorage.setItem("reservationMode", "registered");
+    navigate("/login");
+  };
 
   return (
     <Box className={styles.page}>
@@ -28,6 +41,7 @@ export default function HomePage() {
               Reserve & Dine
             </Typography>
           </Box>
+
           <Button
             variant="contained"
             size="small"
@@ -38,43 +52,40 @@ export default function HomePage() {
               borderRadius: 3,
               textTransform: "none",
               fontWeight: 700,
-              backgroundColor: "#7c3aed", // purple admin color
-              "&:hover": {
-                backgroundColor: "#6d28d9",
-              },
+              backgroundColor: "#7c3aed",
+              "&:hover": { backgroundColor: "#6d28d9" },
             }}
           >
             Admin
           </Button>
-          <Button
-            variant="contained"
-            onClick={() => navigate("/login")}
-            className={styles.loginButton}
-          >
+
+          <Button variant="contained" onClick={continueAsRegistered} className={styles.loginButton}>
             Login / Register
           </Button>
         </Toolbar>
       </AppBar>
+
       <Container maxWidth="lg" className={styles.container}>
         <Stack spacing={6}>
           <Box className={styles.hero}>
             <Typography variant="h1" className={styles.heroTitle}>
-              {`Welcome to Reserve & Dine`}
+              Welcome to Reserve & Dine
             </Typography>
 
             <Typography variant="h5" className={styles.heroSubtitle}>
-              {`Your table is waiting`}
+              Your table is waiting
             </Typography>
           </Box>
 
           <Stack direction={{ xs: "column", md: "row" }} spacing={4} className={styles.choiceStack}>
             <Card className={styles.choiceCard}>
-              <CardActionArea onClick={() => navigate("/reservation")}>
+              <CardActionArea onClick={continueAsGuest}>
                 <CardContent className={styles.choiceCardContent}>
                   <Stack spacing={3} className={styles.choiceCardInner}>
                     <Box className={`${styles.iconCircle} ${styles.guestCircle}`}>
                       <Groups2OutlinedIcon className={`${styles.icon} ${styles.guestIcon}`} />
                     </Box>
+
                     <Typography variant="h4" className={styles.choiceTitle}>
                       Continue as Guest
                     </Typography>
@@ -88,7 +99,7 @@ export default function HomePage() {
             </Card>
 
             <Card className={styles.choiceCard}>
-              <CardActionArea onClick={() => navigate("/login")}>
+              <CardActionArea onClick={continueAsRegistered}>
                 <CardContent className={styles.choiceCardContent}>
                   <Stack spacing={3} className={styles.choiceCardInner}>
                     <Box className={`${styles.iconCircle} ${styles.registeredCircle}`}>

@@ -81,14 +81,16 @@ export default function ReservationPage() {
   });
 
   function mapBackendResultsToOptions(data: any, numberOfGuests: number): ReservationOption[] {
-    const directTableOptions: ReservationOption[] = data.availableTables.map((table: any) => ({
-      id: `table-option-${table.id}`,
-      tableIds: [table.id],
-      tableNumbers: [table.table_number],
-      totalCapacity: table.capacity,
-      tablesNeedCombining: false,
-      wastedSeats: table.capacity - numberOfGuests,
-    }));
+    const directTableOptions: ReservationOption[] = data.availableTables
+      .filter((table: any) => table.capacity >= numberOfGuests)
+      .map((table: any) => ({
+        id: `table-option-${table.id}`,
+        tableIds: [table.id],
+        tableNumbers: [table.table_number],
+        totalCapacity: table.capacity,
+        tablesNeedCombining: false,
+        wastedSeats: table.capacity - numberOfGuests,
+      }));
 
     const combinationOptions: ReservationOption[] = data.suggestedCombinations
       .filter((combo: any) => combo.tables.length > 1)
@@ -97,11 +99,11 @@ export default function ReservationPage() {
         tableIds: combo.tables.map((table: any) => table.id),
         tableNumbers: combo.tables.map((table: any) => table.table_number),
         totalCapacity: combo.totalCapacity,
-        tablesNeedCombining: combo.tables.length > 1,
+        tablesNeedCombining: true,
         wastedSeats: combo.totalCapacity - numberOfGuests,
       }));
 
-    return combinationOptions.length > 0 ? combinationOptions : directTableOptions;
+    return directTableOptions.length > 0 ? directTableOptions : combinationOptions;
   }
 
   const onSubmit = async (values: ReservationSearchFormValues) => {

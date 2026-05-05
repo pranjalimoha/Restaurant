@@ -139,13 +139,6 @@ export default function RegisterPage() {
                     value={registerForm.name}
                     onChange={(e) => setRegisterField("name", e.target.value)}
                   />
-                  <TextField
-                    fullWidth
-                    label="Full Name"
-                    placeholder="Enter your full name"
-                    value={registerForm.name}
-                    onChange={(e) => setRegisterField("name", e.target.value)}
-                  />
 
                   <TextField
                     fullWidth
