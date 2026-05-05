@@ -125,9 +125,9 @@ export type ReservationIdParams = {
 };
 
 export type CompleteReservationBody = {
-  amountSpent?: number;
+  amountSpent: number;
+  paymentMethod: "CASH" | "CREDIT" | "CHECK";
 };
-
 // =========================
 // RESERVATIONS
 // =========================

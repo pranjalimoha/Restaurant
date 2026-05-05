@@ -224,14 +224,14 @@ export default function AdminDashboardPage() {
                   },
                 );
 
-                const formattedTime = new Date(reservation.reservation_time).toLocaleTimeString(
-                  "en-US",
-                  {
-                    hour: "numeric",
-                    minute: "2-digit",
-                    timeZone: "UTC",
-                  },
-                );
+                const formatTimeSlot = (time: string) => {
+                  const start = dayjs(time);
+                  const end = start.add(1, "hour");
+
+                  return `${start.format("h:mm A")} - ${end.format("h:mm A")}`;
+                };
+
+                const formattedTime = formatTimeSlot(reservation.reservation_time);
 
                 const isConfirmedReservation = reservation.status === "CONFIRMED";
 

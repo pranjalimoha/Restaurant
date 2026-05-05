@@ -5,11 +5,7 @@ type AppError = Error & {
   status?: number;
 };
 
-export const notFound = (
-  req: Request,
-  _res: Response,
-  next: NextFunction,
-) => {
+export const notFound = (req: Request, _res: Response, next: NextFunction) => {
   const error: AppError = new Error(`Not Found - ${req.originalUrl}`);
   error.statusCode = 404;
   next(error);

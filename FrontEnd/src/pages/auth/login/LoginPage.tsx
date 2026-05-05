@@ -31,7 +31,6 @@ export default function LoginPage() {
   const handleLogin = async () => {
     setError(null);
 
-    // Γ£à VALIDATION
     if (!loginForm.email || !loginForm.password) {
       setError("Please fill in all fields");
       return;
@@ -70,15 +69,12 @@ export default function LoginPage() {
       const token = data.data.token;
       const user = data.data.user;
 
-      // Γ£à Store globally
       loginSuccess(token, user);
 
-      // Γ£à Save in localStorage
       localStorage.setItem("token", token);
       localStorage.setItem("user", JSON.stringify(user));
 
       resetLoginForm();
-      //navigate("/");
       navigate("/profile");
     } catch (err) {
       if (err instanceof Error) {
@@ -114,12 +110,13 @@ export default function LoginPage() {
                   <Typography variant="h2" className={styles.title}>
                     Sign In
                   </Typography>
+
                   <Typography variant="h6" className={styles.subtitle}>
-                    Welcome back to Reserve & Dine Welcome back to Reserve & Dine
+                    Welcome back to Reserve & Dine
                   </Typography>
                 </Box>
 
-                <Stack spacing={3} sx={{ width: "stretch" }}>
+                <Stack spacing={3} sx={{ width: "100%" }}>
                   <TextField
                     fullWidth
                     label="Email Address"
@@ -148,7 +145,6 @@ export default function LoginPage() {
                   {loading ? "Signing In..." : "Sign In"}
                 </Button>
 
-                {/* ERROR DISPLAY */}
                 {error && (
                   <Typography variant="body2" color="error">
                     {error}

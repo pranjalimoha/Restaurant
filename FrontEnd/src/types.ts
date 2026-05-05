@@ -62,6 +62,11 @@ export type ReservationDetails = {
   status: string;
   requires_holding_fee: boolean;
   holding_fee_amount: string;
+
+  users?: {
+    isRegistered: boolean | number | null;
+  } | null;
+
   reservation_tables: {
     restaurant_tables: {
       table_number: number;
@@ -120,4 +125,14 @@ export type GuestReservationDetailsFormValues = {
   guestEmail: string;
   guestPhone: string;
   specialRequests?: string;
+};
+
+export type CompleteReservationBody = {
+  amountSpent: number;
+  paymentMethod: "CASH" | "CREDIT" | "CHECK";
+};
+
+export type ReservationResponse = {
+  reservation: ReservationDetails;
+  isRegisteredUser: boolean;
 };

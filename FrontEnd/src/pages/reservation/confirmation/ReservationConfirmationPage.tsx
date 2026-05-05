@@ -63,8 +63,21 @@ export default function ReservationConfirmationPage() {
 
   const formattedDate = dayjs(reservation.reservation_date).format("MMMM D, YYYY");
 
-  const formattedTime = dayjs(reservation.reservation_time).format("h:mm A");
-  const isRegisteredUser = Boolean(reservation.user_id);
+  const formatTimeSlot = (time: string) => {
+    const start = dayjs(time);
+    const end = start.add(1, "hour");
+
+    return `${start.format("h:mm A")} - ${end.format("h:mm A")}`;
+  };
+
+  const formattedTime = formatTimeSlot(reservation.reservation_time);
+  const storedUser = JSON.parse(localStorage.getItem("user") || "{}");
+
+  const isRegisteredUser =
+    !!localStorage.getItem("token") &&
+    !!reservation?.users &&
+    reservation?.guest_email?.toLowerCase().trim() ===
+      (storedUser?.email || storedUser?.userEmail || "").toLowerCase().trim();
 
   return (
     <Box sx={{ minHeight: "100vh", background: "#f6f6f6", py: 6 }}>

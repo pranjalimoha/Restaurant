@@ -48,10 +48,7 @@ export const getAllReservations = async () => {
         },
       },
     },
-    orderBy: [
-      { reservation_date: "asc" },
-      { reservation_time: "asc" },
-    ],
+    orderBy: [{ reservation_date: "asc" }, { reservation_time: "asc" }],
   });
 };
 
@@ -84,9 +81,7 @@ export const authorizeHoldingFee = async (reservationId: string) => {
   });
 };
 
-async function checkIfHighTrafficDay(
-  date: Date | string,
-): Promise<boolean> {
+async function checkIfHighTrafficDay(date: Date | string): Promise<boolean> {
   const d = new Date(date);
 
   const month = d.getMonth() + 1;
@@ -166,7 +161,10 @@ export const createReservation = async (
   }
 
   if (reservationDateTime.getTime() < Date.now()) {
-    throw new HttpError("Cannot create a reservation for a past date or time", 400);
+    throw new HttpError(
+      "Cannot create a reservation for a past date or time",
+      400,
+    );
   }
 
   const conflictingReservation = await prisma.reservations.findFirst({
@@ -282,8 +280,8 @@ export const createReservation = async (
 
   const combinationNote = needsCombination
     ? `Tables ${selectedTables
-      .map((table) => table.table_number)
-      .join(" + ")} combined for ${numberOfGuests} guests`
+        .map((table) => table.table_number)
+        .join(" + ")} combined for ${numberOfGuests} guests`
     : null;
 
   return {
@@ -355,7 +353,10 @@ export const cancelReservation = async (
   }
 
   if (reservation.user_id !== userId) {
-    throw new HttpError("You do not have permission to cancel this reservation", 403);
+    throw new HttpError(
+      "You do not have permission to cancel this reservation",
+      403,
+    );
   }
 
   return prisma.reservations.update({

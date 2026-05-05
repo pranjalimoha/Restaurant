@@ -20,7 +20,39 @@ import {
   type ReservationOption,
   type ReservationSearchFormValues,
 } from "../../types";
-import { searchAvailableTables } from "../reservation/reservationApi";
+import { searchAvailableTables } from "./reservationApi";
+
+const generateTimeSlots = () => {
+  const slots = [];
+  let start = 10 * 60; // 10:00 AM
+  const end = 22 * 60; // 10:00 PM
+
+  while (start < end) {
+    const endSlot = start + 60;
+
+    const format = (mins: number) => {
+      const h = Math.floor(mins / 60);
+      const m = mins % 60;
+      const ampm = h >= 12 ? "PM" : "AM";
+      const hour12 = h % 12 === 0 ? 12 : h % 12;
+
+      return `${hour12}:${m.toString().padStart(2, "0")} ${ampm}`;
+    };
+
+    slots.push({
+      label: `${format(start)} - ${format(endSlot)}`,
+      value: `${Math.floor(start / 60)
+        .toString()
+        .padStart(2, "0")}:${(start % 60).toString().padStart(2, "0")}`,
+    });
+
+    start += 60;
+  }
+
+  return slots;
+};
+
+const timeSlots = generateTimeSlots();
 
 export default function ReservationPage() {
   const navigate = useNavigate();
@@ -48,49 +80,28 @@ export default function ReservationPage() {
     },
   });
 
-  type BackendTable = {
-    id: string;
-    table_number?: string | number;
-    tableNumber?: string | number;
-    capacity: number;
-  };
-
-  type BackendCombination = {
-    tables: BackendTable[];
-    totalCapacity: number;
-    needsCombination: boolean;
-  };
-
-  type BackendAvailabilityData = {
-    availableTables: BackendTable[];
-    suggestedCombinations: BackendCombination[];
-  };
-
-  function mapBackendResultsToOptions(
-    data: BackendAvailabilityData,
-    numberOfGuests: number,
-  ): ReservationOption[] {
-    const directTableOptions = data.availableTables.map((table) => ({
+  function mapBackendResultsToOptions(data: any, numberOfGuests: number): ReservationOption[] {
+    const directTableOptions: ReservationOption[] = data.availableTables.map((table: any) => ({
       id: `table-option-${table.id}`,
       tableIds: [table.id],
-      tableNumbers: [String(table.table_number ?? table.tableNumber ?? "")],
+      tableNumbers: [table.table_number],
       totalCapacity: table.capacity,
       tablesNeedCombining: false,
       wastedSeats: table.capacity - numberOfGuests,
     }));
 
-    const combinationOptions = data.suggestedCombinations.map((combo, index) => ({
-      id: `combo-option-${index}`,
-      tableIds: combo.tables.map((table) => table.id),
-      tableNumbers: combo.tables.map((table) =>
-        String(table.table_number ?? table.tableNumber ?? ""),
-      ),
-      totalCapacity: combo.totalCapacity,
-      tablesNeedCombining: combo.needsCombination,
-      wastedSeats: combo.totalCapacity - numberOfGuests,
-    }));
+    const combinationOptions: ReservationOption[] = data.suggestedCombinations
+      .filter((combo: any) => combo.tables.length > 1)
+      .map((combo: any, index: number) => ({
+        id: `combo-option-${index}`,
+        tableIds: combo.tables.map((table: any) => table.id),
+        tableNumbers: combo.tables.map((table: any) => table.table_number),
+        totalCapacity: combo.totalCapacity,
+        tablesNeedCombining: combo.tables.length > 1,
+        wastedSeats: combo.totalCapacity - numberOfGuests,
+      }));
 
-    return [...directTableOptions, ...combinationOptions];
+    return combinationOptions.length > 0 ? combinationOptions : directTableOptions;
   }
 
   const onSubmit = async (values: ReservationSearchFormValues) => {
@@ -136,11 +147,6 @@ export default function ReservationPage() {
     }
   };
 
-  const handleSelectTable = (option: ReservationOption) => {
-    selectTable(option);
-    navigate("/reservation/details");
-  };
-
   return (
     <Box
       sx={{
@@ -163,63 +169,70 @@ export default function ReservationPage() {
           <Card sx={{ borderRadius: 5, boxShadow: "0 10px 30px rgba(15, 23, 42, 0.08)" }}>
             <CardContent>
               <Stack component="form" spacing={2} onSubmit={handleSubmit(onSubmit)}>
-                <Stack spacing={2}>
-                  <Controller
-                    name="date"
-                    control={control}
-                    render={({ field }) => (
-                      <TextField
-                        {...field}
-                        fullWidth
-                        type="date"
-                        slotProps={{
-                          htmlInput: {
-                            min: today,
-                          },
-                        }}
-                        error={Boolean(errors.date)}
-                        helperText={errors.date?.message}
-                      />
-                    )}
-                  />
+                <Controller
+                  name="date"
+                  control={control}
+                  render={({ field }) => (
+                    <TextField
+                      {...field}
+                      fullWidth
+                      type="date"
+                      slotProps={{
+                        htmlInput: {
+                          min: today,
+                        },
+                      }}
+                      error={Boolean(errors.date)}
+                      helperText={errors.date?.message}
+                    />
+                  )}
+                />
 
-                  <Controller
-                    name="time"
-                    control={control}
-                    render={({ field }) => (
-                      <TextField
-                        {...field}
-                        fullWidth
-                        type="time"
-                        error={Boolean(errors.time)}
-                        helperText={errors.time?.message}
-                      />
-                    )}
-                  />
+                <Controller
+                  name="time"
+                  control={control}
+                  render={({ field }) => (
+                    <TextField
+                      {...field}
+                      fullWidth
+                      select
+                      label="Select Time Slot"
+                      value={field.value}
+                      onChange={(event) => field.onChange(event.target.value)}
+                      error={Boolean(errors.time)}
+                      helperText={errors.time?.message}
+                    >
+                      {timeSlots.map((slot) => (
+                        <MenuItem key={slot.value} value={slot.value}>
+                          {slot.label}
+                        </MenuItem>
+                      ))}
+                    </TextField>
+                  )}
+                />
 
-                  <Controller
-                    name="numberOfGuests"
-                    control={control}
-                    render={({ field }) => (
-                      <TextField
-                        {...field}
-                        fullWidth
-                        select
-                        label="Number of Guests"
-                        value={field.value}
-                        onChange={(event) => field.onChange(Number(event.target.value))}
-                        error={Boolean(errors.numberOfGuests)}
-                        helperText={errors.numberOfGuests?.message}
-                      >
-                        {guestNumberOptions.map((num) => (
-                          <MenuItem key={num} value={num}>
-                            {num} Guests
-                          </MenuItem>
-                        ))}
-                      </TextField>
-                    )}
-                  />
-                </Stack>
+                <Controller
+                  name="numberOfGuests"
+                  control={control}
+                  render={({ field }) => (
+                    <TextField
+                      {...field}
+                      fullWidth
+                      select
+                      label="Number of Guests"
+                      value={field.value}
+                      onChange={(event) => field.onChange(Number(event.target.value))}
+                      error={Boolean(errors.numberOfGuests)}
+                      helperText={errors.numberOfGuests?.message}
+                    >
+                      {guestNumberOptions.map((num) => (
+                        <MenuItem key={num} value={num}>
+                          {num} Guests
+                        </MenuItem>
+                      ))}
+                    </TextField>
+                  )}
+                />
 
                 {errorMessage && (
                   <Typography color="error" sx={{ fontWeight: 600 }}>
@@ -292,8 +305,17 @@ export default function ReservationPage() {
 
                           <Button
                             variant="contained"
-                            sx={{ mt: 2, textTransform: "none", borderRadius: 5, fontWeight: 700 }}
-                            onClick={() => handleSelectTable(option)}
+                            sx={{
+                              mt: 2,
+                              textTransform: "none",
+                              borderRadius: 5,
+                              fontWeight: 700,
+                            }}
+                            onClick={() => {
+                              console.log("CLICKED OPTION:", option);
+                              selectTable(option);
+                              navigate("/reservation/details");
+                            }}
                           >
                             Select This Option
                           </Button>

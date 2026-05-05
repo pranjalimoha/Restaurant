@@ -20,6 +20,10 @@ export async function createReservation(payload: CreateReservationPayload) {
     specialRequests: payload.guestInfo.specialRequest,
   };
 
+  console.log("FULL SELECTED TABLE:", payload.selectedTable);
+  console.log("TABLE IDS SENT:", payload.selectedTable.tableIds);
+  console.log("TABLE IDS LENGTH:", payload.selectedTable.tableIds.length);
+
   const token = localStorage.getItem("token");
 
   const response = await fetch(`${API_URL}/api/reservations`, {

@@ -5,16 +5,18 @@
   "main": "src/server.ts",
   "type": "module",
   "scripts": {
-  "dev": "tsx watch src/server.ts",
-  "build": "prisma generate && prisma db push",
-  "start": "tsx src/server.ts",
-  "postinstall": "prisma generate",
-  "db:generate": "prisma generate",
-  "db:push": "prisma db push",
-  "db:seed": "node src/lib/seed.js",
-  "db:reset": "prisma db push --force-reset && node src/lib/seed.js",
-  "db:studio": "prisma studio"
-},
+    "dev": "tsx watch src/server.ts",
+    "build": "tsc",
+    "start": "tsx src/server.ts",
+    "db:generate": "prisma generate",
+    "db:push": "prisma db push",
+    "db:seed": "node src/lib/seed.js",
+    "db:reset": "prisma db push --force-reset && node src/lib/seed.js",
+    "db:studio": "prisma studio",
+    "format": "biome format . --write",
+    "lint": "biome lint .",
+    "check": "biome check . --write"
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",
@@ -37,6 +39,7 @@
     "@types/express": "^5.0.6",
     "@types/node": "^25.6.0",
     "nodemon": "^3.1.14",
+    "tsx": "^4.21.0",
     "typescript": "^6.0.3"
   }
 }
